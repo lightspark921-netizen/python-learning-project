@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 8: File Handling and Data I/O</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #ffd43b; --secondary: #47a1eb; 
+            --sidebar-bg: #0f172a; --content-bg: #1e293b; --body-bg: #020617; 
+            --text-main: #f1f5f9; --accent: #ff7e67; --success: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--primary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a.active { background: #1e293b; color: var(--primary); border-left-color: var(--primary); }
+        .sidebar a:hover { background: #1e293b; color: #fff; }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        
+        .mode-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #0f172a; font-size: 0.9em; }
+        .mode-table th, .mode-table td { border: 1px solid #334155; padding: 12px; text-align: left; }
+        .mode-table th { background: #334155; color: var(--primary); }
+
+        .highlight-box { background: rgba(34, 197, 94, 0.1); border: 1px solid var(--success); padding: 20px; border-radius: 8px; margin: 20px 0; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: var(--success); color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--secondary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Part 2</h3>
+        <a href="lesson6.html">06 การวนซ้ำ (Iteration)</a>
+        <a href="lesson7.html">07 ฟังก์ชันและโมดูล</a>
+        <a href="lesson8.html" class="active">08 การจัดการไฟล์</a>
+        <a href="lesson9.html">09 Handling Exceptions</a>
+        <a href="lesson10.html">10 สถาปัตยกรรม OOP</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part2.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em; color: var(--primary);">⬅️ กลับหน้าสารบัญ Part 2</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 8: การจัดการไฟล์และระบบข้อมูล (File I/O)</h1>
+            
+            <p>ความแตกต่างระหว่างโปรแกรมธรรมดากับซอฟต์แวร์ระดับมืออาชีพ คือความสามารถในการจัดเก็บข้อมูล (Persistence) บทนี้จะสอนการอ่านและเขียนไฟล์เพื่อบันทึกสถานะของโปรแกรมลงในระบบ</p>
+
+            <h2>8.1 File Access Modes</h2>
+            <p>การเปิดไฟล์ใน Python ต้องระบุโหมดให้ชัดเจน เพื่อป้องกันการเขียนทับโดยไม่ตั้งใจค่ะ:</p>
+            
+            <table class="mode-table">
+                <tr><th>Mode</th><th>คำอธิบาย</th></tr>
+                <tr><td><code>'r'</code></td><td><strong>Read:</strong> อ่านอย่างเดียว (Default) - จะ Error ถ้าไม่มีไฟล์</td></tr>
+                <tr><td><code>'w'</code></td><td><strong>Write:</strong> เขียนทับ - จะสร้างไฟล์ใหม่ถ้ายังไม่มี แต่ถ้ามีจะลบของเก่าทิ้ง</td></tr>
+                <tr><td><code>'a'</code></td><td><strong>Append:</strong> เขียนต่อท้าย - ข้อมูลเก่าจะไม่หายไป</td></tr>
+            </table>
+
+            <h2>8.2 The Best Practice: Context Manager</h2>
+            <p>การใช้ <code>with open(...) as f:</code> เป็นวิธีมาตรฐานที่ปลอดภัยที่สุด เพราะ Python จะปิดไฟล์ให้เราอัตโนมัติเมื่อทำงานเสร็จ ป้องกันปัญหาไฟล์เสีย (Corrupt)</p>
+            
+            <div class="highlight-box">
+                <strong>Syntax ที่แนะนำ:</strong><br>
+                <code>with open('memo.txt', 'w') as file:</code><br>
+                <code>&nbsp;&nbsp;&nbsp;&nbsp;file.write("บันทึกข้อมูลสำเร็จ!")</code>
+            </div>
+
+            <h2>8.3 การทำงานกับข้อมูล JSON</h2>
+            <p>JSON เป็นรูปแบบมาตรฐานในการแลกเปลี่ยนข้อมูล Python มีโมดูล <code>json</code> ที่แปลง Dictionary เป็นไฟล์ข้อความได้ทันที</p>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>file_and_json_lab.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">Run Code</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="12">
+import json
+
+# 1. เขียนไฟล์ข้อความธรรมดา
+with open("note.txt", "w") as f:
+    f.write("สวัสดี Neet! นี่คือข้อมูลที่บันทึกไว้")
+
+# 2. อ่านไฟล์ออกมาโชว์
+with open("note.txt", "r") as f:
+    content = f.read()
+    print(f"อ่านจากไฟล์: {content}")
+
+# 3. ลองจัดรูปแบบ JSON
+user_info = {"id": 101, "status": "Active", "skills": ["Python", "HTML"]}
+print("\nรูปแบบ JSON String:")
+print(json.dumps(user_info, indent=2))
+                </textarea>
+                <div id="console-output" class="output">> รอการประมวลผลระบบ Data I/O...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="lesson7.html" class="btn-page prev">⬅️ บทที่ 7</a>
+                <a href="lesson9.html" class="btn-page next">บทที่ 9: Exceptions ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบ I/O พร้อมแล้ว! ลองทดสอบเขียน/อ่านไฟล์ดูนะคะ";
+            } catch (err) {
+                out.innerText = "> โหลดระบบ Python ไม่สำเร็จ";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังเข้าถึงไฟล์ระบบเสมือน...\n";
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> ทำงานสำเร็จ (ไม่มี Output)";
+                out.style.color = "#success";
+            } catch (err) {
+                out.innerText = `[File Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

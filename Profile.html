@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Developer Profile - ทีมผู้จัดทำ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #ffd43b; --secondary: #47a1eb; --bg: #020617; --card-bg: #1e293b;
+        }
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 40px 20px;
+        }
+
+        h1 { color: var(--primary); margin-bottom: 40px; border-bottom: 2px solid var(--secondary); padding-bottom: 10px; }
+
+        .team-container { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            max-width: 1000px;
+        }
+
+        .profile-card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 20px; 
+            text-align: center; 
+            border: 1px solid #334155; 
+            width: 320px; 
+            transition: transform 0.3s ease;
+        }
+        .profile-card:hover { transform: translateY(-10px); border-color: var(--secondary); }
+
+        .profile-img { 
+            width: 120px; height: 120px; 
+            border-radius: 50%; 
+            background: #475569; 
+            margin-bottom: 20px; 
+            display: inline-block; 
+            line-height: 120px; 
+            font-size: 40px; 
+            border: 3px solid var(--secondary);
+        }
+
+        .advisor-section {
+            margin-top: 40px;
+            background: rgba(71, 161, 235, 0.1);
+            padding: 20px 50px;
+            border-radius: 15px;
+            border: 1px dashed var(--secondary);
+            text-align: center;
+        }
+
+        h2 { color: var(--primary); margin: 10px 0; font-size: 1.3em; }
+        p { color: #cbd5e1; line-height: 1.6; font-size: 0.9em; }
+        strong { color: var(--secondary); }
+
+        .btn-home { 
+            display: inline-block; 
+            margin-top: 40px; 
+            padding: 12px 35px; 
+            background: var(--secondary); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 50px; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-home:hover { background: white; color: var(--secondary); box-shadow: 0 0 20px rgba(71, 161, 235, 0.4); }
+    </style>
+</head>
+<body>
+
+    <h1>👨‍💻 คณะผู้จัดทำโครงการ</h1>
+
+    <div class="team-container">
+        <div class="profile-card">
+            <div class="profile-img">👨‍💻</div>
+            <h2>นาย กิตติศักดิ์ ทองอินทร์</h2>
+            <p>
+                <strong>ระดับการศึกษา:</strong> ปวส. 2 <br>
+                <strong>รหัสประจำตัว:</strong>67319090001<br>
+                <strong>สาขาวิชา:</strong>สาขาเทคโนโลยีคอมพิวเตอร์ <br>
+                <strong>สถานศึกษา:</strong>วิทยาลัยเทคนิคท่าหลวงซิเมนต์ไทยอนุสรณ์
+            </p>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-img">👨‍💻</div>
+            <h2>นาย รชต​ สารบูรณ์</h2>
+            <p>
+                <strong>ระดับการศึกษา:</strong> ปวส. 2 <br>
+                <strong>รหัสประจำตัว:</strong>67319090022<br>
+                <strong>สาขาวิชา:</strong>สาขาเทคโนโลยีคอมพิวเตอร์ <br>
+                <strong>สถานศึกษา:</strong>วิทยาลัยเทคนิคท่าหลวงซิเมนต์ไทยอนุสรณ์
+            </p>
+        </div>
+    </div>
+
+    <div class="advisor-section">
+        <h2>📋 อาจารย์ที่ปรึกษาโครงการ</h2>
+        <p><strong>นาย กนก ทองเนื้อดี</strong></p>
+        <p><strong>นาย เอกราช เขียวทอง</strong></p>
+    </div>
+
+    <a href="Home.html" class="btn-home">⬅️ กลับหน้าหลัก</a>
+
+</body>
+</html>

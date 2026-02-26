@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python E-Learning | Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <style>
+        :root { 
+            --primary: #47a1eb; 
+            --secondary: #ffd43b;
+            --bg: #020617; 
+            --glass: rgba(30, 41, 59, 0.7); 
+            --text: #f1f5f9; 
+        }
+
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            background: linear-gradient(rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.8)), 
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            color: var(--text); 
+            overflow: hidden;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease;
+        }
+
+        h1 { 
+            font-size: 3.5em; 
+            margin: 0;
+            background: linear-gradient(to right, #47a1eb, #ffd43b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* ตกแต่งส่วนแสดงชื่อผู้ใช้ */
+        .user-welcome {
+            font-size: 1.4em;
+            color: var(--text);
+            margin-top: 15px;
+        }
+
+        #user-name {
+            color: var(--secondary);
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .header-section p.motto {
+            font-size: 1.1em;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .menu-container { 
+            display: flex; 
+            gap: 25px; 
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .menu-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(10px);
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            text-decoration: none; 
+            color: white; 
+            width: 220px; 
+            text-align: center; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .menu-card:hover { 
+            transform: translateY(-15px) scale(1.05); 
+            border-color: var(--primary); 
+            background: rgba(71, 161, 235, 0.2);
+            box-shadow: 0 20px 40px rgba(71, 161, 235, 0.3);
+        }
+
+        .menu-card span { 
+            font-size: 4em; 
+            display: block; 
+            margin-bottom: 20px; 
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        .menu-card h3 { 
+            margin: 10px 0; 
+            font-size: 1.5em; 
+            color: var(--secondary);
+        }
+
+        .menu-card p { 
+            font-size: 0.9em; 
+            color: #cbd5e1; 
+            margin: 0;
+        }
+
+        .btn-logout {
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            background: rgba(239, 68, 68, 0.2); 
+            color: #ff6b6b; 
+            border: 1px solid #ef4444; 
+            padding: 10px 20px; 
+            border-radius: 50px; 
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-logout:hover {
+            background: #ef4444;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .menu-container { flex-direction: column; overflow-y: auto; max-height: 70vh; padding: 20px; }
+            h1 { font-size: 2.2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+
+    <div class="header-section">
+        <h1>PYTHON E-LEARNING</h1>
+        <p class="user-welcome">ยินดีต้อนรับคุณ, <span id="user-name">Guest</span></p>
+        <p class="motto">ยกระดับทักษะการเขียนโปรแกรมสู่อนาคต</p>
+    </div>
+    
+    <div class="menu-container">
+        <a href="Lessons.html" class="menu-card">
+            <span>📚</span>
+            <h3>บทเรียน</h3>
+            <p>เจาะลึกเนื้อหา 10 บทเรียน</p>
+        </a>
+        
+        <a href="Test.html" class="menu-card">
+            <span>📝</span>
+            <h3>แบบทดสอบ</h3>
+            <p>วัดระดับความรู้หลังเรียน</p>
+        </a>
+        
+        <a href="Profile.html" class="menu-card">
+            <span>👨‍💻</span>
+            <h3>ผู้จัดทำ</h3>
+            <p>ข้อมูลโปรเจกต์และผู้พัฒนา</p>
+        </a>
+    </div>
+
+    <script>
+        // ดึงชื่อผู้ใช้มาแสดงผล
+        window.onload = function() {
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                document.getElementById('user-name').innerText = user;
+            }
+        };
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

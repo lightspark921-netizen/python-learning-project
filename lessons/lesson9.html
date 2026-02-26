@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 9: Exception Handling</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #ffd43b; --secondary: #47a1eb; 
+            --sidebar-bg: #0f172a; --content-bg: #1e293b; --body-bg: #020617; 
+            --text-main: #f1f5f9; --error: #ff7e67; --success: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--primary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a.active { background: #1e293b; color: var(--primary); border-left-color: var(--primary); }
+        .sidebar a:hover { background: #1e293b; color: #fff; }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        
+        .error-card { background: rgba(255, 126, 103, 0.1); border-left: 5px solid var(--error); padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .info-list { margin-bottom: 20px; padding-left: 20px; color: #cbd5e1; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: var(--success); color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--secondary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Part 2</h3>
+        <a href="lesson6.html">06 การวนซ้ำ (Iteration)</a>
+        <a href="lesson7.html">07 ฟังก์ชันและโมดูล</a>
+        <a href="lesson8.html">08 การจัดการไฟล์</a>
+        <a href="lesson9.html" class="active">09 Handling Exceptions</a>
+        <a href="lesson10.html">10 สถาปัตยกรรม OOP</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part2.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em; color: var(--primary);">⬅️ กลับหน้าสารบัญ Part 2</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 9: การจัดการข้อผิดพลาด (Exception Handling)</h1>
+            
+            <p>เคยเขียนโปรแกรมแล้วมันหยุดทำงาน (Crash) ทันทีที่ผู้ใช้พิมพ์ข้อมูลผิดไหมคะ? นั่นแหละค่ะคือสิ่งที่เราจะแก้กันในบทนี้ เราจะเรียนรู้วิธี "ดักจับ" ข้อผิดพลาดเพื่อให้โปรแกรมยังรันต่อไปได้สวยๆ ค่ะ</p>
+
+            <h2>9.1 รู้จักกับ Common Exceptions</h2>
+            <p>ก่อนจะแก้ เราต้องรู้ก่อนว่า Python มี Error ยอดฮิตอะไรบ้าง:</p>
+            <ul class="info-list">
+                <li><strong style="color:var(--error)">ZeroDivisionError:</strong> เมื่อพยายามหารตัวเลขด้วยศูนย์</li>
+                <li><strong style="color:var(--error)">ValueError:</strong> เมื่อส่งค่าผิดประเภท (เช่น เอาคำว่า "สิบ" ไปแปลงเป็นตัวเลข)</li>
+                <li><strong style="color:var(--error)">FileNotFoundError:</strong> เมื่อพยายามเปิดไฟล์ที่ไม่มีอยู่จริง</li>
+                <li><strong style="color:var(--error)">TypeError:</strong> เมื่อใช้ Operator ผิดประเภทข้อมูล</li>
+            </ul>
+
+            <h2>9.2 โครงสร้าง Try-Except</h2>
+            <p>นี่คือหัวใจหลักค่ะ เราจะเอาโค้ดที่ "เสี่ยง" ไปวางใน <code>try</code> และวางแผนรับมือใน <code>except</code></p>
+            
+            
+
+            <div class="error-card">
+                <strong>Syntax:</strong><br>
+                <code>try:</code> (ลองทำอันนี้ดูนะ)<br>
+                <code>except ErrorName:</code> (ถ้าเจอปัญหาชื่อนี้ ให้แก้แบบนี้นะ)<br>
+                <code>else:</code> (ถ้าไม่มีปัญหาเลย ให้ทำอันนี้นะ)<br>
+                <code>finally:</code> (ไม่ว่าจะเกิดปัญหาหรือไม่ ต้องทำอันนี้เสมอ เช่น ปิดไฟล์)
+            </div>
+
+            <h2>9.3 การ Custom Error (Raise)</h2>
+            <p>บางครั้งโปรแกรมไม่ได้ผิดหลักไวยากรณ์ แต่ผิด "กฎทางธุรกิจ" ของเรา เช่น อายุห้ามติดลบ เราสามารถสั่ง <code>raise Exception("ข้อความ")</code> เพื่อสร้าง Error ขึ้นมาเองได้ค่ะ</p>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>safe_divider.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">Run Code</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="15">
+def division_test(a, b):
+    try:
+        print(f"กำลังพยายามคำนวณ: {a} / {b}")
+        result = a / b
+    except ZeroDivisionError:
+        print("❌ พลาดแล้ว! ห้ามหารด้วยศูนย์นะคะ")
+    except TypeError:
+        print("❌ ข้อมูลไม่ใช่ตัวเลขค่ะ คำนวณไม่ได้")
+    else:
+        print(f"✅ สำเร็จ! ผลลัพธ์คือ: {result}")
+    finally:
+        print("--- จบการตรวจสอบรอบนี้ ---\n")
+
+# ทดสอบแบบต่างๆ
+division_test(10, 2)
+division_test(10, 0)
+division_test(10, "5")
+                </textarea>
+                <div id="console-output" class="output">> รอการตรวจสอบระบบ Safety...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="lesson8.html" class="btn-page prev">⬅️ บทที่ 8</a>
+                <a href="lesson10.html" class="btn-page next">บทสุดท้าย: OOP ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบ Safety พร้อม! Neet ลองแก้ตัวเลขใน division_test ดูได้เลยนะคะ";
+            } catch (err) {
+                out.innerText = "> ระบบขัดข้อง กรุณารีเฟรชหน้าจอ";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังดักจับ Exception...\n";
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> รันสำเร็จอย่างไร้รอยต่อ";
+                out.style.color = "#10b981";
+            } catch (err) {
+                out.innerText = `[Fatal Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Professional Path | All Lessons</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        :root { --primary: #47a1eb; --secondary: #ffd43b; --bg: #020617; --card: #1e293b; }
+        body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 50px; text-align: center; }
+        h1 { color: var(--primary); margin-bottom: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto; }
+        .part-card { background: var(--card); padding: 40px; border-radius: 15px; border: 1px solid #334155; transition: 0.3s; text-decoration: none; color: inherit; display: block; }
+        .part-card:hover { transform: translateY(-10px); border-color: var(--secondary); }
+        .part-card h2 { color: var(--secondary); margin-top: 0; }
+        .part-card p { font-size: 0.9em; color: #94a3b8; }
+        .btn-back { display: inline-block; margin-top: 40px; color: #94a3b8; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>บทเรียนทั้งหมด (Python Course)</h1>
+    <div class="grid">
+        <a href="Part1.html" class="part-card">
+            <h2>Part 1 (บทที่ 1 - 5)</h2>
+            <p>พื้นฐาน, การติดตั้ง, ตัวแปร, และการควบคุมทิศทาง (Branching)</p>
+        </a>
+        <a href="Part2.html" class="part-card">
+            <h2>Part 2 (บทที่ 6 - 10)</h2>
+            <p>การวนซ้ำ, ฟังก์ชัน, การจัดการไฟล์, Error, และ OOP</p>
+        </a>
+    </div>
+    <a href="Home.html" class="btn-back">← กลับหน้าแรกหลัก</a>
+</body>
+</html>

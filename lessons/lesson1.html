@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1: Introduction and Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
+            --content-bg: #1e293b; --body-bg: #020617; --text-main: #f1f5f9; 
+            --accent: #ff7e67;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--secondary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a.active { background: #1e293b; color: var(--secondary); border-left-color: var(--secondary); }
+        .sidebar a:hover { background: #1e293b; color: #fff; }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        ul li { margin-bottom: 12px; color: #cbd5e1; }
+        .highlight { color: var(--accent); font-weight: bold; }
+        code { background: #0f172a; padding: 2px 6px; border-radius: 4px; color: var(--accent); font-family: 'Consolas', monospace; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: #22c55e; color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--primary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Course</h3>
+        <a href="lesson1.html" class="active">01 บทนำและสถาปัตยกรรม</a>
+        <a href="lesson2.html">02 การเตรียมสภาพแวดล้อม</a>
+        <a href="lesson3.html">03 ตัวแปรและชนิดข้อมูล</a>
+        <a href="lesson4.html">04 การคำนวณและนิพจน์</a>
+        <a href="lesson5.html">05 การควบคุมทิศทางโปรแกรม</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part1.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em;">⬅️ กลับหน้าสารบัญ</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 1: บทนำและสถาปัตยกรรมเชิงลึก</h1>
+            
+            <p>ภาษา Python ถูกสร้างขึ้นโดย <span class="highlight">Guido van Rossum</span> ในปี 1989 โดยมีปรัชญาพื้นฐานที่เน้นความเรียบง่ายและการอ่านโค้ดได้ง่าย (Readability) ซึ่งทำให้มันกลายเป็นภาษาที่ได้รับความนิยมสูงสุดในยุคปัจจุบัน โดยเฉพาะในงานด้าน Data Science และ Artificial Intelligence (AI)</p>
+
+            <h2>1.1 ปรัชญาการออกแบบ: The Zen of Python</h2>
+            <p>ความโดดเด่นของ Python คือการมี "ธรรมนูญ" ในการเขียนโค้ดที่เรียกว่า <span class="highlight">PEP 20</span> ซึ่งนักพัฒนาทั่วโลกยึดถือเพื่อให้โค้ดมีมาตรฐานเดียวกัน ตัวอย่างปรัชญาที่สำคัญมีดังนี้:</p>
+            <ul>
+                <li><strong>Beautiful is better than ugly:</strong> โค้ดที่สวยงามจัดการง่ายกว่าโค้ดที่รกรุงรัง</li>
+                <li><strong>Explicit is better than implicit:</strong> การเขียนคำสั่งให้ชัดเจนดีกว่าการเขียนแบบซ่อนความหมายที่อาจทำให้ผู้อื่นสับสน</li>
+                <li><strong>Simple is better than complex:</strong> ความเรียบง่ายคือเป้าหมายสูงสุดของการแก้ปัญหา</li>
+                <li><strong>Complex is better than complicated:</strong> หากปัญหาซับซ้อน โครงสร้างโค้ดต้องไม่ทำให้มันยุ่งเหยิงกว่าเดิม</li>
+            </ul>
+
+            
+
+            <h2>1.2 สถาปัตยกรรมการทำงานของระบบ Python</h2>
+            <p>หลายคนเข้าใจผิดว่า Python ทำงานช้า แต่ในความเป็นจริงสถาปัตยกรรมเบื้องหลังถูกออกแบบมาเพื่อความยืดหยุ่นสูง (High Flexibility) โดยมีการทำงานเป็นขั้นตอนดังนี้:</p>
+            <ol>
+                <li><strong>Compiler Stage:</strong> เมื่อเราเขียนโค้ดไฟล์ <code>.py</code> ตัว Python Compiler จะทำการเช็ค Syntax และแปลโค้ดเหล่านั้นให้กลายเป็น <span class="highlight">Bytecode</span> (ไฟล์นามสกุล <code>.pyc</code>)</li>
+                <li><strong>PVM (Python Virtual Machine) Stage:</strong> Bytecode จะถูกส่งต่อไปยัง PVM ซึ่งทำหน้าที่เป็น Interpreter ตัวจริงที่คอยอ่านและสั่งงาน CPU ให้ทำงานตามคำสั่งนั้นๆ</li>
+            </ol>
+            <p>กระบวนการนี้ทำให้ Python เป็นภาษาแบบ <strong>Cross-platform</strong> คือเขียนเพียงครั้งเดียว (Write Once) แต่สามารถรันได้ทุกที่ที่มี PVM ติดตั้งอยู่ (Run Anywhere)</p>
+
+            <h2>1.3 การประยุกต์ใช้ในอุตสาหกรรมปัจจุบัน</h2>
+            <p>ในปัจจุบัน Python ไม่ได้เป็นเพียงภาษาสำหรับผู้เริ่มต้น แต่เป็นเครื่องมือหลักขององค์กรระดับโลก:</p>
+            <ul>
+                <li><strong>Artificial Intelligence:</strong> ใช้ Library เช่น <code>TensorFlow</code> และ <code>PyTorch</code> ในการสร้างโครงข่ายประสาทเทียม</li>
+                <li><strong>Big Data:</strong> ใช้ <code>Pandas</code> และ <code>NumPy</code> ในการประมวลผลข้อมูลระดับ Terabytes</li>
+                <li><strong>Web Backend:</strong> ระบบของ Instagram และ Pinterest ถูกสร้างขึ้นด้วย Framework อย่าง <code>Django</code></li>
+            </ul>
+
+            <div class="playground">
+                <div class="pg-header"><span>example_check.py</span> <button class="btn-run" onclick="runL1()">Run Code</button></div>
+                <textarea id="ed1" class="code-area" rows="6">
+# ตัวอย่างการเรียกใช้ Module มาตรฐานเพื่อเช็คระบบ
+import sys
+import platform
+
+print(f"Python Version: {sys.version}")
+print(f"Operating System: {platform.system()}")
+print("ยินดีต้อนรับสู่บทเรียนแรกของคุณ!")
+                </textarea>
+                <div id="res1" class="output">> ผลลัพธ์จะปรากฏที่นี่...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="../Part1.html" class="btn-page prev">🏠 สารบัญ Part 1</a>
+                <a href="lesson2.html" class="btn-page next">บทที่ 2: การเตรียมระบบ ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function runL1() {
+            const code = document.getElementById('ed1').value;
+            const res = document.getElementById('res1');
+            res.innerText = "> กำลังประมวลผลผ่าน PVM Simulator...\n";
+            
+            setTimeout(() => {
+                if(code.includes('import sys')) {
+                    res.innerText += "Python Version: 3.12.2 (Standard Edition)\nOperating System: Web-Simulator\nยินดีต้อนรับสู่บทเรียนแรกของคุณ!";
+                } else if(code.includes('print')) {
+                    const match = code.match(/print\((["'])(.*?)\1\)/);
+                    res.innerText += match ? match[2] : "Output displayed successfully";
+                } else {
+                    res.innerText += "Code executed successfully (No output)";
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>

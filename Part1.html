@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Programming Course | Part 1: Essentials</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
+            --content-bg: #1e293b; --body-bg: #020617; --text-main: #f1f5f9; 
+            --accent: #ff7e67; --success: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); min-height: 100vh; }
+        
+        /* Navigation Bar */
+        .navbar { background: var(--sidebar-bg); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
+        .navbar .brand { font-weight: bold; color: var(--primary); font-size: 1.2em; letter-spacing: 1px; }
+        .btn-home { color: #94a3b8; text-decoration: none; font-size: 0.9em; transition: 0.3s; }
+        .btn-home:hover { color: var(--secondary); }
+
+        /* Header Section */
+        .header-section { text-align: center; padding: 60px 20px; background: linear-gradient(180deg, #0f172a 0%, #020617 100%); }
+        .header-section h1 { font-size: 2.5em; margin: 0; color: #fff; }
+        .header-section p { color: #94a3b8; font-size: 1.1em; max-width: 600px; margin: 15px auto; line-height: 1.6; }
+
+        /* Course Grid */
+        .container { max-width: 1000px; margin: -40px auto 100px; padding: 0 20px; }
+        .course-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        
+        .lesson-card { 
+            background: var(--content-bg); border-radius: 12px; padding: 30px; display: flex; 
+            align-items: center; justify-content: space-between; text-decoration: none; 
+            transition: 0.3s; border: 1px solid #334155; position: relative; overflow: hidden;
+        }
+        .lesson-card:hover { transform: translateX(10px); border-color: var(--primary); background: #243146; }
+        .lesson-card::before { 
+            content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 5px; 
+            background: var(--primary); opacity: 0; transition: 0.3s; 
+        }
+        .lesson-card:hover::before { opacity: 1; }
+
+        .lesson-info { flex-grow: 1; }
+        .lesson-number { color: var(--primary); font-weight: bold; font-size: 0.85em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .lesson-title { color: #fff; font-size: 1.4em; margin: 0; font-weight: 700; }
+        .lesson-desc { color: #94a3b8; font-size: 0.95em; margin-top: 8px; }
+
+        .status-tag { background: rgba(71, 161, 235, 0.1); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.8em; font-weight: bold; border: 1px solid var(--primary); }
+
+        .footer { text-align: center; padding: 40px; color: #475569; font-size: 0.85em; border-top: 1px solid #1e293b; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="brand">PYTHON_COURSE.v1</div>
+        <a href="Lessons.html" class="btn-home">🏠 กลับหน้าหลัก</a>
+    </nav>
+
+    <div class="header-section">
+        <span style="color: var(--secondary); font-weight: bold; letter-spacing: 2px;">MODULE 01</span>
+        <h1>Part 1: Programming Essentials</h1>
+        <p>ปูพื้นฐานการเขียนโปรแกรมด้วยภาษา Python ตั้งแต่ประวัติความเป็นมา จนถึงการควบคุมทิศทางของโปรแกรมอย่างมีประสิทธิภาพ</p>
+    </div>
+
+ <div class="course-grid">
+    <a href="Lessons/lesson1.html" class="lesson-card">
+        <div class="lesson-info">
+            <span class="lesson-number">Chapter 01</span>
+            <h2 class="lesson-title">บทนำและสถาปัตยกรรม Python</h2>
+            <div class="lesson-desc">เรียนรู้ประวัติความเป็นมา ปรัชญา Zen of Python และการทำงานของ PVM</div>
+        </div>
+        <div class="status-tag">Core Theory</div>
+    </a>
+
+    <a href="Lessons/lesson2.html" class="lesson-card">
+        <div class="lesson-info">
+            <span class="lesson-number">Chapter 02</span>
+            <h2 class="lesson-title">การเตรียมสภาพแวดล้อม</h2>
+            <div class="lesson-desc">การติดตั้ง Python, VS Code และการจัดการ Virtual Environment (venv)</div>
+        </div>
+        <div class="status-tag">Setup</div>
+    </a>
+
+    <a href="Lessons/lesson3.html" class="lesson-card">
+        <div class="lesson-info">
+            <span class="lesson-number">Chapter 03</span>
+            <h2 class="lesson-title">ตัวแปรและชนิดข้อมูล</h2>
+            <div class="lesson-desc">เจาะลึก Dynamic Typing, List, Tuple, Dictionary และการจัดการหน่วยความจำ</div>
+        </div>
+        <div class="status-tag">Data Structure</div>
+    </a>
+
+    <a href="Lessons/lesson4.html" class="lesson-card">
+        <div class="lesson-info">
+            <span class="lesson-number">Chapter 04</span>
+            <h2 class="lesson-title">การคำนวณและนิพจน์</h2>
+            <div class="lesson-desc">การใช้ Arithmetic Operators และการเปรียบเทียบค่าทางตรรกศาสตร์</div>
+        </div>
+        <div class="status-tag">Logic</div>
+    </a>
+
+    <a href="Lessons/lesson5.html" class="lesson-card">
+        <div class="lesson-info">
+            <span class="lesson-number">Chapter 05</span>
+            <h2 class="lesson-title">การควบคุมทิศทางโปรแกรม</h2>
+            <div class="lesson-desc">การใช้ If-Else, Match-Case และความสำคัญของ Indentation</div>
+        </div>
+        <div class="status-tag">Control Flow</div>
+    </a>
+</div>
+
+    <footer class="footer">
+        &copy; 2026 Python Professional Programming Project. All Rights Reserved.
+    </footer>
+
+</body>
+</html>

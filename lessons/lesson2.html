@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2: Environment Setup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
+            --content-bg: #1e293b; --body-bg: #020617; --text-main: #f1f5f9; 
+            --accent: #ff7e67;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--secondary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a:hover, .sidebar a.active { background: #1e293b; color: var(--secondary); border-left-color: var(--secondary); }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        .highlight { color: var(--accent); font-weight: bold; }
+        code { background: #0f172a; padding: 4px 10px; border-radius: 4px; color: var(--secondary); font-family: 'Consolas', monospace; display: inline-block; margin: 5px 0; }
+        
+        .command-box { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #334155; color: #fff; font-family: 'Consolas', monospace; margin: 20px 0; }
+        .command-box span { color: #22c55e; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: #22c55e; color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; cursor: not-allowed; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--primary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Course</h3>
+        <a href="lesson1.html">01 บทนำและสถาปัตยกรรม</a>
+        <a href="lesson2.html" class="active">02 การเตรียมสภาพแวดล้อม</a>
+        <a href="lesson3.html">03 ตัวแปรและชนิดข้อมูล</a>
+        <a href="lesson4.html">04 การคำนวณและนิพจน์</a>
+        <a href="lesson5.html">05 การควบคุมทิศทางโปรแกรม</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part1.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em;">⬅️ กลับหน้าสารบัญ</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 2: การเตรียมสภาพแวดล้อมและการใช้เครื่องมือ</h1>
+            
+            <p>ก่อนที่เราจะเริ่มเขียนโปรแกรม พื้นฐานที่สำคัญที่สุดคือการตั้งค่าเครื่องมือให้พร้อมใช้งานเสมือนนักพัฒนามืออาชีพ บทนี้จะสอนขั้นตอนการติดตั้งและหัวใจสำคัญของการจัดการระบบ</p>
+
+            <h2>2.1 การติดตั้ง Python และความสำคัญของ PATH</h2>
+            <p>ในขั้นตอนการติดตั้ง Python บน Windows สิ่งที่สำคัญที่สุดคือการทำเครื่องหมายที่ <span class="highlight">"Add Python to PATH"</span> ระบบ PATH คือตัวแปรของระบบปฏิบัติการที่บอกให้เครื่องรู้ว่าไฟล์รันโปรแกรมของ Python อยู่ที่ไหน</p>
+
+            <h2>2.2 Visual Studio Code: Editor อันดับ 1</h2>
+            <p>Visual Studio Code (VS Code) เป็นโปรแกรมแก้ไขโค้ดที่ได้รับความนิยมสูงสุดในโลกปัจจุบัน เนื่องจากความเบาและความสามารถในการขยาย (Extensions)</p>
+
+            <h2>2.3 หัวใจสำคัญ: Virtual Environments (venv)</h2>
+            <p>นักพัฒนาจึงนิยมใช้ <span class="highlight">Virtual Environment</span> เพื่อสร้างพื้นที่จำลองแยกแต่ละโปรเจกต์ออกจากกัน เพื่อป้องกันปัญหา Library เวอร์ชันตีกัน</p>
+            
+            
+            
+            <p><strong>คำสั่งที่ควรรู้:</strong></p>
+            <div class="command-box">
+                <span># 1. สร้างสภาพแวดล้อมจำลอง</span><br>
+                python -m venv venv_name<br><br>
+                <span># 2. การเปิดใช้งาน (Activate) บน Windows</span><br>
+                .\venv_name\Scripts\activate
+            </div>
+
+            <h2>2.4 การจัดการแพ็คเกจด้วย PIP</h2>
+            <p><code>pip</code> (Package Installer for Python) คือเครื่องมือมาตรฐานในการดาวน์โหลดและจัดการ Library ภายนอกจาก <span class="highlight">PyPI</span></p>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>check_setup.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">Run Code</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="6">
+# ลองพิมพ์ Python อะไรก็ได้ที่นี่!
+import sys
+print(f"Python Version: {sys.version}")
+print("Status: Environment is ready to execute.")
+                </textarea>
+                <div id="console-output" class="output">> เตรียมระบบ Python (Pyodide)...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="lesson1.html" class="btn-page prev">⬅️ บทที่ 1</a>
+                <a href="lesson3.html" class="btn-page next">บทที่ 3: ตัวแปร ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        // โหลดระบบ Python Interpreter
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบ Python พร้อมใช้งานแล้ว! ลองพิมพ์โค้ดแล้วกดรันดูนะคะ";
+            } catch (err) {
+                out.innerText = "> ไม่สามารถโหลด Python ได้ กรุณาเช็คอินเทอร์เน็ตค่ะ";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังประมวลผล...\n";
+            
+            try {
+                // เซ็ตระบบให้ดักจับ print
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                
+                // รันโค้ดจริง
+                await pyodide.runPythonAsync(code);
+                
+                // ดึงผลลัพธ์มาแสดง
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> รันสำเร็จ (ไม่มีการแสดงผล)";
+                out.style.color = "#10b981";
+            } catch (err) {
+                out.innerText = `[Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

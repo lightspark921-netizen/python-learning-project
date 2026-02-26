@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Part 2 Final Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #ffd43b; --secondary: #47a1eb; 
+            --bg: #020617; --card-bg: #1e293b; 
+            --text: #f1f5f9; --correct: #22c55e; --wrong: #ff7e67;
+        }
+        body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .quiz-container { width: 100%; max-width: 800px; background: var(--card-bg); padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        h1 { color: var(--primary); text-align: center; border-bottom: 2px solid #334155; padding-bottom: 20px; }
+        .question-box { margin-bottom: 30px; padding: 20px; border-bottom: 1px solid #334155; }
+        .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 15px; display: block; }
+        
+        .options { display: grid; gap: 10px; }
+        .option { background: #0f172a; border: 1px solid #334155; padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .option:hover { border-color: var(--secondary); background: #1e293b; }
+        .option.selected { border-color: var(--primary); background: rgba(255, 212, 59, 0.1); }
+        
+        .btn-submit { display: block; width: 100%; padding: 15px; background: var(--secondary); color: white; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        #result { margin-top: 30px; display: none; text-align: center; }
+        .score { font-size: 2em; color: var(--primary); font-weight: bold; }
+        .explanation { font-size: 0.9em; margin-top: 5px; color: #94a3b8; display: none; }
+        
+        .correct-ans { border-color: var(--correct) !important; background: rgba(34, 197, 94, 0.1) !important; }
+        .wrong-ans { border-color: var(--wrong) !important; background: rgba(255, 126, 103, 0.1) !important; }
+        
+        .nav-home { display: block; text-align: center; margin-top: 20px; color: var(--secondary); text-decoration: none; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>📝 แบบทดสอบหลังเรียน Part 2</h1>
+    <div id="quiz-content">
+        </div>
+    
+    <button class="btn-submit" onclick="checkAnswers()">ส่งคำตอบและดูผลคะแนน</button>
+    
+    <div id="result">
+        <p>คะแนนของคุณคือ</p>
+        <div class="score" id="score-display">0/20</div>
+        <p id="feedback-msg"></p>
+        <a href="Home.html" class="nav-home">กลับหน้าแรก</a>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    { q: "1. ใน Python คำสำคัญใดที่ใช้ในการนิยาม (Define) ฟังก์ชัน?", a: "def", options: ["function", "def", "void", "method"], hint: "Python ใช้คำย่อจาก define" },
+    { q: "2. การใช้ 'with open(...)' ดีกว่าการใช้ 'close()' อย่างไร?", a: "ช่วยปิดไฟล์ให้อัตโนมัติ", options: ["เขียนไฟล์เร็วกว่า", "ช่วยปิดไฟล์ให้อัตโนมัติ", "ไม่ต้องใช้ encoding", "ใช้แรมคือน้อยกว่า"], hint: "ปลอดภัยกว่าเมื่อเกิด Error" },
+    { q: "3. ใน OOP สิ่งที่เปรียบเสมือน 'พิมพ์เขียว' (Blueprint) คืออะไร?", a: "Class", options: ["Object", "Method", "Class", "Variable"], hint: "มันคือแม่แบบ" },
+    { q: "4. เมธอด __init__ มีหน้าที่อะไร?", a: "กำหนดค่าเริ่มต้นให้กับ Object", options: ["ลบ Object", "กำหนดค่าเริ่มต้นให้กับ Object", "รันโปรแกรมหลัก", "ต่อฐานข้อมูล"], hint: "ทำงานเป็นอย่างแรกตอนสร้าง Object" },
+    { q: "5. ตัวแปร self ใน Class หมายถึงอะไร?", a: "Object ปัจจุบันที่ถูกเรียกใช้", options: ["ตัวแปร Global", "คลาสแม่", "Object ปัจจุบันที่ถูกเรียกใช้", "ค่าคงที่"], hint: "หมายถึง 'ตัวเอง'" },
+    { q: "6. Error ที่เกิดจากการหารด้วย 0 คืออะไร?", a: "ZeroDivisionError", options: ["ValueError", "ZeroDivisionError", "NullError", "TypeError"], hint: "ชื่อตรงตัวเรื่องการหาร" },
+    { q: "7. ส่วนของ finally ใน try-except จะทำงานเมื่อใด?", a: "ทำงานเสมอ", options: ["เมื่อไม่มี Error", "เมื่อมี Error", "ทำงานเสมอ", "ไม่ทำงานถ้ามี return"], hint: "ทำเป็นขั้นตอนสุดท้าย" },
+    { q: "8. โมดูลใดใช้จัดการข้อมูล JSON?", a: "json", options: ["js", "json", "request", "data"], hint: "ชื่อเดียวกับฟอร์แมตข้อมูล" },
+    { q: "9. การสืบทอด Class (Inheritance) ใน Python เขียนอย่างไร?", a: "class Child(Parent):", options: ["class Child extends Parent:", "class Child(Parent):", "class Child implements Parent:", "class Child -> Parent:"], hint: "ใช้วงเล็บหลังชื่อคลาส" },
+    { q: "10. คำสั่งใดใช้สร้าง Custom Error ขึ้นมาเอง?", a: "raise", options: ["throw", "error", "raise", "alert"], hint: "แปลว่าทำให้เกิด/ยกขึ้น" },
+    { q: "11. การส่งค่าแบบ calculate(x=10, y=20) เรียกว่าอะไร?", a: "Keyword Argument", options: ["Positional Argument", "Keyword Argument", "Default Parameter", "List Argument"], hint: "ระบุชื่อ Key เข้าไป" },
+    { q: "12. Local Scope หมายถึงตัวแปรที่ประกาศที่ใด?", a: "ภายในฟังก์ชัน", options: ["นอกสุดของไฟล์", "ภายในฟังก์ชัน", "ในโมดูลอื่น", "ในไฟล์ JSON"], hint: "อยู่แค่ในขอบเขตเฉพาะส่วน" },
+    { q: "13. Encapsulation มีประโยชน์หลักอย่างไร?", a: "ซ่อนรายละเอียดและป้องกันการแก้ไขโดยตรง", options: ["รันเร็วขึ้น", "ซ่อนรายละเอียดและป้องกันการแก้ไขโดยตรง", "ไม่ต้องเขียน Class", "แปลงเป็นภาษาอื่น"], hint: "เหมือนแคปซูลยา" },
+    { q: "14. คำสั่งใดอ่านไฟล์ออกมาเป็น List ของข้อความแต่ละบรรทัด?", a: "f.readlines()", options: ["f.read()", "f.readlines()", "f.write()", "f.get()"], hint: "อ่านบรรทัดที่มีหลายบรรทัด (เติม s)" },
+    { q: "15. Polymorphism หมายถึงอะไร?", a: "ชื่อ Method เดียวกันแต่ทำงานต่างกัน", options: ["มีหลายไฟล์", "สืบทอดหลายคลาส", "ชื่อ Method เดียวกันแต่ทำงานต่างกัน", "การซ่อนโค้ด"], hint: "แปลว่าหลายรูปแบบ" },
+    { q: "16. json.dumps() ทำหน้าที่อะไร?", a: "แปลง Dictionary เป็น JSON String", options: ["อ่านไฟล์ JSON", "แปลง Dictionary เป็น JSON String", "ลบไฟล์", "สร้าง Dictionary"], hint: "ตัว s คือ String" },
+    { q: "17. Default Parameter มีไว้เพื่ออะไร?", a: "เรียกฟังก์ชันได้โดยไม่ต้องส่งค่าบางตัว", options: ["รันเร็วขึ้น", "เรียกฟังก์ชันได้โดยไม่ต้องส่งค่าบางตัว", "ป้องกันการส่งค่า", "ระบุฟังก์ชันหลัก"], hint: "ค่าเริ่มต้นถ้าไม่ระบุมา" },
+    { q: "18. เรียกใช้ Method คลาสแม่ใช้คำสั่งอะไร?", a: "super()", options: ["parent()", "super()", "this()", "base()"], hint: "ระดับเหนือกว่า" },
+    { q: "19. File Mode สำหรับเขียนต่อท้ายคืออะไร?", a: "'a'", options: ["'r'", "'w'", "'a'", "'x'"], hint: "ย่อมาจาก Append" },
+    { q: "20. เมื่อ Python เจอ Error จนหยุดรัน เรียกว่าอะไร?", a: "Raising an Exception", options: ["Crash", "Raising an Exception", "Looping", "Debugging"], hint: "การโยนข้อยกเว้นออกมา" }
+];
+
+function loadQuiz() {
+    const container = document.getElementById('quiz-content');
+    quizData.forEach((data, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question-box';
+        qDiv.innerHTML = `
+            <span class="question-text">${data.q}</span>
+            <div class="options" id="q${index}">
+                ${data.options.map(opt => `<div class="option" onclick="selectOption(${index}, this)">${opt}</div>`).join('')}
+            </div>
+            <div class="explanation" id="exp${index}">เฉลย: ${data.a} (${data.hint})</div>
+        `;
+        container.appendChild(qDiv);
+    });
+}
+
+function selectOption(qIdx, el) {
+    const options = document.querySelectorAll(`#q${qIdx} .option`);
+    options.forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function checkAnswers() {
+    let score = 0;
+    quizData.forEach((data, index) => {
+        const selected = document.querySelector(`#q${index} .selected`);
+        const explanation = document.getElementById(`exp${index}`);
+        explanation.style.display = 'block';
+        
+        const allOptions = document.querySelectorAll(`#q${index} .option`);
+        
+        allOptions.forEach(opt => {
+            if (opt.innerText === data.a) opt.classList.add('correct-ans');
+            if (opt.classList.contains('selected') && opt.innerText !== data.a) {
+                opt.classList.add('wrong-ans');
+            }
+        });
+
+        if (selected && selected.innerText === data.a) {
+            score++;
+        }
+    });
+
+    document.getElementById('score-display').innerText = `${score} / ${quizData.length}`;
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('feedback-msg').innerText = score >= 15 ? "สุดยอดไปเลยค่ะ สอบผ่านแล้ว!" : "พยายามอีกนิดนะ ลองกลับไปทบทวนบทเรียนดูค่ะ";
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+window.onload = loadQuiz;
+</script>
+
+</body>
+</html>

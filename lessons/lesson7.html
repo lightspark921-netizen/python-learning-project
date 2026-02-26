@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7: Functions and Modules</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #ffd43b; --secondary: #47a1eb; 
+            --sidebar-bg: #0f172a; --content-bg: #1e293b; --body-bg: #020617; 
+            --text-main: #f1f5f9; --accent: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--primary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a.active { background: #1e293b; color: var(--primary); border-left-color: var(--primary); }
+        .sidebar a:hover { background: #1e293b; color: #fff; }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        .highlight { color: var(--primary); font-weight: bold; }
+        
+        .code-block { background: #0f172a; padding: 15px; border-radius: 8px; font-family: 'Consolas', monospace; color: #f1f5f9; margin: 15px 0; border: 1px solid #334155; border-left: 4px solid var(--accent); }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--secondary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Part 2</h3>
+        <a href="lesson6.html">06 การวนซ้ำ (Iteration)</a>
+        <a href="lesson7.html" class="active">07 ฟังก์ชันและโมดูล</a>
+        <a href="lesson8.html">08 การจัดการไฟล์</a>
+        <a href="lesson9.html">09 Handling Exceptions</a>
+        <a href="lesson10.html">10 สถาปัตยกรรม OOP</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part2.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em; color: var(--primary);">⬅️ กลับหน้าสารบัญ Part 2</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 7: ฟังก์ชันและโมดูล (Functions & Modules)</h1>
+            
+            <p>เมื่อโปรแกรมมีความซับซ้อนมากขึ้น การแบ่งโค้ดออกเป็นส่วนย่อยๆ ที่ทำงานเฉพาะอย่าง (Modularization) จะช่วยให้เราไม่ต้องเขียนโค้ดซ้ำ และหาข้อผิดพลาดได้ง่ายขึ้นมากค่ะ</p>
+
+            <h2>7.1 การนิยามฟังก์ชัน (Defining Functions)</h2>
+            <p>ฟังก์ชันคือชุดคำสั่งที่สามารถนำกลับมาใช้ซ้ำได้ โดยใช้คำสำคัญ <code>def</code> และสามารถส่งค่ากลับได้ด้วย <code>return</code></p>
+            
+            
+
+            <div class="code-block">
+                def calculate_vat(price):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;return price * 0.07
+            </div>
+
+            <h2>7.2 ประเภทของ Argument</h2>
+            <p>ความยืดหยุ่นของ Python ในการส่งค่า:</p>
+            <ul>
+                <li><strong>Positional Arguments:</strong> ส่งตามลำดับ (เช่น <code>add(5, 10)</code>)</li>
+                <li><strong>Default Parameters:</strong> กำหนดค่าเริ่มต้น (เช่น <code>def greet(msg="Hello")</code>)</li>
+            </ul>
+
+            <h2>7.3 ขอบเขตของตัวแปร (Scope)</h2>
+            <p>ตัวแปรที่ประกาศในฟังก์ชันเป็น <span class="highlight">Local Scope</span> (เรียกใช้ข้างนอกไม่ได้) ส่วนตัวแปรที่ประกาศข้างนอกเป็น <span class="highlight">Global Scope</span></p>
+            
+            
+
+            <h2>7.4 การใช้โมดูล (Standard Library)</h2>
+            <p>เราสามารถดึงความสามารถเสริมมาใช้ได้ด้วยคำสั่ง <code>import</code> เช่น โมดูล <code>math</code> หรือ <code>random</code></p>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>function_lab.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">Run Code</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="12">
+import math
+
+# 1. นิยามฟังก์ชันพร้อม Default Parameter
+def calculate_area(radius, shape="circle"):
+    if shape == "circle":
+        return math.pi * (radius ** 2)
+    return 0
+
+# 2. เรียกใช้ฟังก์ชัน
+r = 10
+area = calculate_area(r)
+
+print(f"พื้นที่วงกลมที่มีรัศมี {r} หน่วย")
+print(f"คำนวณได้: {area:.2f} ตารางหน่วย")
+                </textarea>
+                <div id="console-output" class="output">> รอการเรียกใช้ฟังก์ชัน...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="lesson6.html" class="btn-page prev">⬅️ บทที่ 6</a>
+                <a href="lesson8.html" class="btn-page next">บทที่ 8: การจัดการไฟล์ ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบ Function พร้อมใช้งาน! Neet ลองแก้ค่า radius ในโค้ดดูนะคะ";
+            } catch (err) {
+                out.innerText = "> โหลดระบบไม่สำเร็จ";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังประมวลผลฟังก์ชันสแต็ก...\n";
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> รันสำเร็จ (ไม่มีการแสดงผล)";
+                out.style.color = "#10b981";
+            } catch (err) {
+                out.innerText = `[Function Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

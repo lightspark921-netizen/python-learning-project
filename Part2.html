@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Programming Course | Part 2: Advanced Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        // ตรวจสอบสถานะการล็อกอิน
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #ffd43b; /* เปลี่ยนเป็นสีเหลืองทองเพื่อให้ดูต่างจาก Part 1 */
+            --secondary: #47a1eb; 
+            --sidebar-bg: #0f172a; 
+            --content-bg: #1e293b; --body-bg: #020617; --text-main: #f1f5f9; 
+            --accent: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); min-height: 100vh; }
+        
+        /* Navigation Bar */
+        .navbar { background: var(--sidebar-bg); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
+        .navbar .brand { font-weight: bold; color: var(--primary); font-size: 1.2em; letter-spacing: 1px; }
+        .btn-home { color: #94a3b8; text-decoration: none; font-size: 0.9em; transition: 0.3s; }
+        .btn-home:hover { color: var(--primary); }
+
+        /* Header Section */
+        .header-section { text-align: center; padding: 60px 20px; background: linear-gradient(180deg, #1e1b4b 0%, #020617 100%); }
+        .header-section h1 { font-size: 2.5em; margin: 0; color: #fff; }
+        .header-section p { color: #94a3b8; font-size: 1.1em; max-width: 600px; margin: 15px auto; line-height: 1.6; }
+
+        /* Course Grid */
+        .container { max-width: 1000px; margin: -40px auto 100px; padding: 0 20px; }
+        .course-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        
+        .lesson-card { 
+            background: var(--content-bg); border-radius: 12px; padding: 30px; display: flex; 
+            align-items: center; justify-content: space-between; text-decoration: none; 
+            transition: 0.3s; border: 1px solid #334155; position: relative; overflow: hidden;
+        }
+        .lesson-card:hover { transform: translateX(10px); border-color: var(--primary); background: #243146; }
+        .lesson-card::before { 
+            content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 5px; 
+            background: var(--primary); opacity: 0; transition: 0.3s; 
+        }
+        .lesson-card:hover::before { opacity: 1; }
+
+        .lesson-info { flex-grow: 1; }
+        .lesson-number { color: var(--primary); font-weight: bold; font-size: 0.85em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .lesson-title { color: #fff; font-size: 1.4em; margin: 0; font-weight: 700; }
+        .lesson-desc { color: #94a3b8; font-size: 0.95em; margin-top: 8px; }
+
+        .status-tag { background: rgba(255, 212, 59, 0.1); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.8em; font-weight: bold; border: 1px solid var(--primary); }
+
+        .footer { text-align: center; padding: 40px; color: #475569; font-size: 0.85em; border-top: 1px solid #1e293b; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="brand">PYTHON_COURSE.v2</div>
+        <a href="Lessons.html" class="btn-home">🏠 กลับหน้าหลัก</a>
+    </nav>
+
+    <div class="header-section">
+        <span style="color: var(--primary); font-weight: bold; letter-spacing: 2px;">MODULE 02</span>
+        <h1>Part 2: Advanced Logic & Architecture</h1>
+        <p>ยกระดับทักษะสู่การเขียนโปรแกรมเชิงโครงสร้าง การจัดการข้อผิดพลาด และการออกแบบซอฟต์แวร์ด้วยแนวคิดเชิงวัตถุ (OOP)</p>
+    </div>
+
+    <div class="container">
+        <div class="course-grid">
+            <a href="Lessons/lesson6.html" class="lesson-card">
+                <div class="lesson-info">
+                    <span class="lesson-number">Chapter 06</span>
+                    <h2 class="lesson-title">การวนซ้ำและการทำซ้ำ (Iteration)</h2>
+                    <div class="lesson-desc">เจาะลึก For, While และเทคนิค List Comprehension เพื่อเพิ่มความเร็วในการประมวลผล</div>
+                </div>
+                <div class="status-tag">Intermediate</div>
+            </a>
+
+            <a href="Lessons/lesson7.html" class="lesson-card">
+                <div class="lesson-info">
+                    <span class="lesson-number">Chapter 07</span>
+                    <h2 class="lesson-title">ฟังก์ชันและ Modular Code</h2>
+                    <div class="lesson-desc">การสร้าง Reusable Code ด้วยฟังก์ชัน, Lambda และการแยกโมดูลเพื่อการทำงานเป็นทีม</div>
+                </div>
+                <div class="status-tag">Structure</div>
+            </a>
+
+            <a href="Lessons/lesson8.html" class="lesson-card">
+                <div class="lesson-info">
+                    <span class="lesson-number">Chapter 08</span>
+                    <h2 class="lesson-title">การจัดการไฟล์และระบบข้อมูล</h2>
+                    <div class="lesson-desc">การอ่านเขียนไฟล์ Text, CSV และการจัดการข้อมูล JSON ผ่าน Context Manager</div>
+                </div>
+                <div class="status-tag">Data I/O</div>
+            </a>
+
+            <a href="Lessons/lesson9.html" class="lesson-card">
+                <div class="lesson-info">
+                    <span class="lesson-number">Chapter 09</span>
+                    <h2 class="lesson-title">Handling Exceptions</h2>
+                    <div class="lesson-desc">การสร้างระบบดักจับข้อผิดพลาด (Try-Except) เพื่อป้องกันโปรแกรมหยุดทำงานกะทันหัน</div>
+                </div>
+                <div class="status-tag">Stability</div>
+            </a>
+
+            <a href="Lessons/lesson10.html" class="lesson-card">
+                <div class="lesson-info">
+                    <span class="lesson-number">Chapter 10</span>
+                    <h2 class="lesson-title">สถาปัตยกรรม OOP</h2>
+                    <div class="lesson-desc">แนวคิดเชิงวัตถุ Classes, Objects, Inheritance และ Polymorphism สำหรับระบบขนาดใหญ่</div>
+                </div>
+                <div class="status-tag">Advanced</div>
+            </a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2026 Python Professional Programming Project. All Rights Reserved.
+    </footer>
+
+</body>
+</html>

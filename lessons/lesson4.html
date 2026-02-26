@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4: Operators and Expressions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
+            --content-bg: #1e293b; --body-bg: #020617; --text-main: #f1f5f9; 
+            --accent: #ff7e67;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--secondary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a:hover, .sidebar a.active { background: #1e293b; color: var(--secondary); border-left-color: var(--secondary); }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        .highlight { color: var(--accent); font-weight: bold; }
+        
+        .op-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .op-item { background: #0f172a; padding: 15px; border-radius: 8px; border-left: 3px solid var(--primary); }
+        .op-item code { color: var(--secondary); font-size: 1.2em; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: #22c55e; color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; cursor: not-allowed; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--primary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Course</h3>
+        <a href="lesson1.html">01 บทนำและสถาปัตยกรรม</a>
+        <a href="lesson2.html">02 การเตรียมสภาพแวดล้อม</a>
+        <a href="lesson3.html">03 ตัวแปรและชนิดข้อมูล</a>
+        <a href="lesson4.html" class="active">04 การคำนวณและนิพจน์</a>
+        <a href="lesson5.html">05 การควบคุมทิศทางโปรแกรม</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part1.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em;">⬅️ กลับหน้าสารบัญ</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 4: การคำนวณและนิพจน์ (Operators & Expressions)</h1>
+            
+            <p>นิพจน์ (Expression) คือการนำตัวแปรและค่าคงที่มาประมวลผลร่วมกับตัวดำเนินการ (Operators) เพื่อให้ได้ผลลัพธ์ใหม่ ใน Python มีตัวดำเนินการที่หลากหลายซึ่งช่วยให้การคำนวณทางคณิตศาสตร์และตรรกศาสตร์ทำได้ง่ายขึ้น</p>
+
+            <h2>4.1 ตัวดำเนินการทางคณิตศาสตร์ (Arithmetic Operators)</h2>
+            <div class="op-list">
+                <div class="op-item"><code>//</code> <strong>Floor Division:</strong> หารเอาส่วน (ตัดเศษทิ้ง)</div>
+                <div class="op-item"><code>%</code> <strong>Modulus:</strong> หารเอาเศษ</div>
+                <div class="op-item"><code>**</code> <strong>Exponentiation:</strong> การยกกำลัง</div>
+                <div class="op-item"><code>/</code> <strong>Division:</strong> การหาร (ได้ float เสมอ)</div>
+            </div>
+
+            
+
+            <h2>4.2 ลำดับความสำคัญ (Operator Precedence)</h2>
+            <p>เมื่อมีตัวดำเนินการหลายตัวในบรรทัดเดียว Python จะเรียงลำดับตามกฎ <strong>PEMDAS</strong>:</p>
+            <ul>
+                <li>1. วงเล็บ <code>()</code></li>
+                <li>2. ยกกำลัง <code>**</code></li>
+                <li>3. คูณ หาร <code>* / // %</code></li>
+                <li>4. บวก ลบ <code>+ -</code></li>
+            </ul>
+
+            <h2>4.3 ตัวดำเนินการทางตรรกศาสตร์ (Logical Operators)</h2>
+            <p>ใช้สำหรับการเปรียบเทียบค่า ซึ่งจะให้ผลลัพธ์เป็น <code>True</code> หรือ <code>False</code> เท่านั้น:</p>
+            <ul>
+                <li><strong>Comparison:</strong> <code>==</code>, <code>!=</code>, <code>></code>, <code><</code></li>
+                <li><strong>Logical:</strong> <code>and</code>, <code>or</code>, <code>not</code></li>
+            </ul>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>math_lab.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">Run Code</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="8">
+# ทดสอบลำดับความสำคัญและการคำนวณจริง
+result = (10 + 2) * 5 / 2
+power = 2 ** 10
+is_even = (10 % 2 == 0)
+
+print(f"ผลลัพธ์จาก (10 + 2) * 5 / 2 = {result}")
+print(f"2 ยกกำลัง 10 = {power}")
+print(f"10 เป็นเลขคู่ใช่ไหม? : {is_even}")
+                </textarea>
+                <div id="console-output" class="output">> รอคำนวณจาก Interpreter...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="lesson3.html" class="btn-page prev">⬅️ บทที่ 3</a>
+                <a href="lesson5.html" class="btn-page next">บทที่ 5: การควบคุมทิศทาง ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบพร้อมแล้ว! ลองใส่สมการคณิตศาสตร์ที่ Neet ต้องการในช่องสีดำได้เลยค่ะ";
+            } catch (err) {
+                out.innerText = "> ระบบโหลดไม่สำเร็จ กรุณาเช็คอินเทอร์เน็ตค่ะ";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังประมวลผลนิพจน์ทางคณิตศาสตร์...\n";
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> รันสำเร็จ (ไม่มีการแสดงผล)";
+                out.style.color = "#10b981";
+            } catch (err) {
+                out.innerText = `[Math Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

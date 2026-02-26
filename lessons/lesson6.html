@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 6: Iteration and Loops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #ffd43b; /* ธีมเหลืองทอง Part 2 */
+            --secondary: #47a1eb; 
+            --sidebar-bg: #0f172a; 
+            --content-bg: #1e293b; --body-bg: #020617; --text-main: #f1f5f9; 
+            --accent: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--primary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a.active { background: #1e293b; color: var(--primary); border-left-color: var(--primary); }
+        .sidebar a:hover { background: #1e293b; color: #fff; }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        .highlight { color: var(--primary); font-weight: bold; }
+        
+        .code-block { background: #0f172a; padding: 15px; border-radius: 8px; font-family: 'Consolas', monospace; color: #f1f5f9; margin: 15px 0; border: 1px solid #334155; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .next { background: var(--secondary); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Part 2</h3>
+        <a href="lesson6.html" class="active">06 การวนซ้ำ (Iteration)</a>
+        <a href="lesson7.html">07 ฟังก์ชันและโมดูล</a>
+        <a href="lesson8.html">08 การจัดการไฟล์</a>
+        <a href="lesson9.html">09 Handling Exceptions</a>
+        <a href="lesson10.html">10 สถาปัตยกรรม OOP</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part2.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em; color: var(--primary);">⬅️ กลับหน้าสารบัญ Part 2</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 6: การวนซ้ำและการทำซ้ำ (Iteration)</h1>
+            
+            <p>ในโลกของการเขียนโปรแกรม การทำซ้ำงานเดิมๆ คือสิ่งที่คอมพิวเตอร์ทำได้ดีกว่ามนุษย์ Python จึงเตรียมเครื่องมือที่ทรงพลังในการจัดการกับข้อมูลจำนวนมากผ่านการวนซ้ำ (Loops)</p>
+
+            <h2>6.1 For Loop: การวนซ้ำตามจำนวนรอบที่แน่นอน</h2>
+            <p><code>for</code> loop ใน Python มักใช้ร่วมกับออบเจกต์ที่วนรอบได้ (Iterables) เช่น List หรือการใช้ฟังก์ชัน <code>range()</code></p>
+            
+
+[Image of Python for loop diagram]
+
+            <div class="code-block">
+                for i in range(5):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;print(f"รอบที่ {i}")
+            </div>
+
+            <h2>6.2 While Loop: การวนซ้ำตามเงื่อนไข</h2>
+            <p><code>while</code> จะทำงานไปเรื่อยๆ จนกว่าเงื่อนไขที่กำหนดจะเป็นเท็จ (False)</p>
+            
+
+[Image of Python while loop flowchart]
+
+
+            <h2>6.3 เทคนิคขั้นสูง: List Comprehension</h2>
+            <p>ฟีเจอร์เด็ดของ Python ที่ช่วยสร้าง List ในบรรทัดเดียว:</p>
+            <div class="code-block">
+                squares = [x**2 for x in range(10)]
+            </div>
+
+            <h2>6.4 การควบคุม Loop (Break & Continue)</h2>
+            <ul>
+                <li><strong>break:</strong> สั่งให้หยุดการวนซ้ำทันที</li>
+                <li><strong>continue:</strong> ข้ามโค้ดส่วนที่เหลือในรอบนั้นแล้วไปเริ่มรอบใหม่</li>
+            </ul>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>loop_lab.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">Run Code</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="10">
+# ลองสร้าง List ของเลขคู่โดยใช้ List Comprehension
+even_numbers = [i for i in range(11) if i % 2 == 0]
+
+print("--- รายงานผลการวนซ้ำ ---")
+for num in even_numbers:
+    if num == 6:
+        print(f"ข้ามเลข {num} ด้วย continue")
+        continue
+    print(f"พบเลขคู่: {num}")
+
+print("จบการทำงาน")
+                </textarea>
+                <div id="console-output" class="output">> รอการประมวลผลการวนซ้ำ...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="../Part2.html" class="btn-page prev">⬅️ สารบัญ Part 2</a>
+                <a href="lesson7.html" class="btn-page next">บทที่ 7: ฟังก์ชัน ➡️</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบ Loop พร้อมแล้วค่ะ! ลองเขียน For Loop หรือ While Loop ได้เลยนะคะ";
+            } catch (err) {
+                out.innerText = "> โหลด Python ไม่สำเร็จ กรุณาเช็คการเชื่อมต่อ";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังวนลูปประมวลผลข้อมูล...\n";
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> รันสำเร็จ (ไม่มีการแสดงผล)";
+                out.style.color = "#10b981";
+            } catch (err) {
+                out.innerText = `[Loop Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

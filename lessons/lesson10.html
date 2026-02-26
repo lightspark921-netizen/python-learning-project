@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 10: Object-Oriented Programming (OOP)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+    // ตรวจสอบสถานะการล็อกอิน
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
+        window.location.href = '../index.html'; 
+    }
+</script>
+    <style>
+        :root {
+            --primary: #ffd43b; --secondary: #47a1eb; 
+            --sidebar-bg: #0f172a; --content-bg: #1e293b; --body-bg: #020617; 
+            --text-main: #f1f5f9; --accent: #a855f7; --success: #22c55e;
+        }
+        body { font-family: 'Sarabun', sans-serif; margin: 0; background: var(--body-bg); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); height: 100vh; position: fixed; border-right: 1px solid #1e293b; padding-top: 20px; }
+        .sidebar h3 { color: var(--primary); text-align: center; font-size: 1.1em; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .sidebar a { display: block; color: #94a3b8; padding: 12px 25px; text-decoration: none; font-size: 0.9em; transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar a.active { background: #1e293b; color: var(--primary); border-left-color: var(--primary); }
+        .sidebar a:hover { background: #1e293b; color: #fff; }
+
+        .main-content { margin-left: 280px; flex-grow: 1; padding: 50px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 850px; background: var(--content-bg); padding: 60px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); line-height: 1.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2em; margin-bottom: 20px; border-bottom: 2px solid #334155; padding-bottom: 15px; }
+        h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
+        p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
+        
+        .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+        .concept-card { background: #0f172a; padding: 20px; border-radius: 10px; border: 1px solid #334155; }
+        .concept-card h4 { color: var(--accent); margin-top: 0; }
+
+        .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
+        .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
+        .code-area { width: 100%; background: #000; color: #ffd43b; border: none; padding: 25px; font-family: 'Consolas', monospace; font-size: 1.1em; outline: none; resize: vertical; box-sizing: border-box; }
+        .btn-run { background: var(--success); color: #fff; border: none; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:disabled { background: #666; }
+        .output { background: #0f172a; padding: 20px; border-top: 1px solid #334155; color: #10b981; font-family: 'Consolas', monospace; min-height: 60px; white-space: pre-wrap; }
+
+        .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
+        .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .prev { background: #334155; color: #fff; }
+        .finish { background: linear-gradient(45deg, #a855f7, #47a1eb); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h3>Python Part 2</h3>
+        <a href="lesson6.html">06 การวนซ้ำ (Iteration)</a>
+        <a href="lesson7.html">07 ฟังก์ชันและโมดูล</a>
+        <a href="lesson8.html">08 การจัดการไฟล์</a>
+        <a href="lesson9.html">09 Handling Exceptions</a>
+        <a href="lesson10.html" class="active">10 สถาปัตยกรรม OOP</a>
+        <div style="padding: 20px; margin-top: 50px;">
+            <a href="../Part2.html" style="border: 1px dashed var(--primary); text-align: center; font-size: 0.8em; color: var(--primary);">⬅️ กลับหน้าสารบัญ Part 2</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>บทที่ 10: สถาปัตยกรรม OOP (Object-Oriented Programming)</h1>
+            
+            <p>ยินดีด้วยค่ะ Neet! คุณเดินทางมาถึงบทที่สำคัญที่สุดในสายงานโปรแกรมเมอร์มืออาชีพ OOP คือการมองทุกอย่างในโปรแกรมให้เป็น "วัตถุ" ที่มีทั้งคุณสมบัติและพฤติกรรมค่ะ</p>
+
+            <h2>10.1 Class vs Object</h2>
+            <p>ลองนึกภาพว่า <strong>Class</strong> คือ "แบบแปลนพิมพ์เขียว" ส่วน <strong>Object</strong> คือ "สิ่งที่สร้างขึ้นจากแปลนนั้น" ค่ะ</p>
+            
+            
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>Attributes</h4>
+                    <p>คือ "ข้อมูล" หรือ "สถานะ" ของวัตถุ เช่น สีของรถ, ชื่อของพนักงาน, หรือเลือดของตัวละครในเกม</p>
+                </div>
+                <div class="concept-card">
+                    <h4>Methods</h4>
+                    <p>คือ "พฤติกรรม" หรือ "สิ่งที่ทำได้" เช่น รถสามารถเร่งความเร็วได้, พนักงานสามารถคำนวณเงินเดือนได้</p>
+                </div>
+            </div>
+
+            <h2>10.2 หัวใจสำคัญของ OOP (The Pillars)</h2>
+            <ul style="color: #cbd5e1;">
+                <li><strong>Encapsulation:</strong> การห่อหุ้มข้อมูลไว้ภายใน (ป้องกันการเข้าถึงจากภายนอกโดยตรง)</li>
+                <li><strong>Inheritance:</strong> การสืบทอดคุณสมบัติ (เช่น คลาสหมา สืบทอดมาจากคลาสสัตว์)</li>
+                <li><strong>Polymorphism:</strong> การที่วัตถุต่างชนิดกัน มีชื่อฟังก์ชันเหมือนกันแต่ทำงานต่างกัน</li>
+            </ul>
+
+            
+
+            <h2>10.3 การเขียน Constructor (`__init__`)</h2>
+            <p>ใน Python เราใช้ฟังก์ชัน <code>__init__</code> เพื่อกำหนดค่าเริ่มต้นให้กับวัตถุทันทีที่มันถูกสร้างขึ้นมาค่ะ</p>
+
+            <div class="playground">
+                <div class="pg-header">
+                    <span>robot_factory.py</span> 
+                    <button class="btn-run" id="run-btn" onclick="runPython()">สร้างหุ่นยนต์</button>
+                </div>
+                <textarea id="code-input" class="code-area" rows="18">
+class Robot:
+    def __init__(self, name, model):
+        self.name = name
+        self.model = model
+        self.battery = 100
+
+    def introduce(self):
+        return f"สวัสดี! ผมชื่อ {self.name} รุ่น {self.model} แบตเตอรี่คงเหลือ {self.battery}%"
+
+    def charge(self):
+        self.battery = 100
+        return f"{self.name} ชาร์จแบตเต็มแล้ว!"
+
+# สร้าง Object จากคลาส Robot
+robot1 = Robot("Umi-Bot", "V.3.10")
+robot2 = Robot("Neet-Bot", "X-Series")
+
+print(robot1.introduce())
+print(robot2.introduce())
+print(robot2.charge())
+                </textarea>
+                <div id="console-output" class="output">> รอโรงงานผลิตหุ่นยนต์...</div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="lesson9.html" class="btn-page prev">⬅️ บทที่ 9</a>
+                <a href="../Part2.html" class="btn-page finish">🎉 จบหลักสูตร Part 2!</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pyodide;
+        async function initPyodide() {
+            const out = document.getElementById('console-output');
+            try {
+                pyodide = await loadPyodide();
+                out.innerText = "> ระบบ OOP พร้อมใช้งาน! ลองตั้งชื่อหุ่นยนต์ในแบบของตัวเองดูนะคะ";
+            } catch (err) {
+                out.innerText = "> ระบบขัดข้อง";
+            }
+        }
+        initPyodide();
+
+        async function runPython() {
+            const code = document.getElementById('code-input').value;
+            const out = document.getElementById('console-output');
+            const btn = document.getElementById('run-btn');
+            
+            btn.disabled = true;
+            out.innerText = "> กำลังประกอบวัตถุและรันเมธอด...\n";
+            
+            try {
+                await pyodide.runPythonAsync(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                out.innerText = stdout || "> วัตถุถูกสร้างขึ้นสำเร็จ";
+                out.style.color = "#10b981";
+            } catch (err) {
+                out.innerText = `[OOP Error]: ${err.message}`;
+                out.style.color = "#ff7e67";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

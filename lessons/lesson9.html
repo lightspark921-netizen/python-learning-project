@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #ffd43b; --secondary: #47a1eb; 
@@ -34,8 +32,9 @@
         h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
         p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
         
-        .error-card { background: rgba(255, 126, 103, 0.1); border-left: 5px solid var(--error); padding: 20px; margin: 20px 0; border-radius: 4px; }
-        .info-list { margin-bottom: 20px; padding-left: 20px; color: #cbd5e1; }
+        .error-card { background: rgba(255, 126, 103, 0.1); border-left: 5px solid var(--error); padding: 25px; margin: 20px 0; border-radius: 8px; }
+        .info-list { margin-bottom: 20px; padding-left: 20px; color: #cbd5e1; list-style-type: none; }
+        .info-list li { margin-bottom: 10px; padding: 5px 15px; background: rgba(255,255,255,0.05); border-radius: 5px; }
 
         .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
         .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
@@ -68,32 +67,32 @@
         <div class="container">
             <h1>บทที่ 9: การจัดการข้อผิดพลาด (Exception Handling)</h1>
             
-            <p>เคยเขียนโปรแกรมแล้วมันหยุดทำงาน (Crash) ทันทีที่ผู้ใช้พิมพ์ข้อมูลผิดไหมคะ? นั่นแหละค่ะคือสิ่งที่เราจะแก้กันในบทนี้ เราจะเรียนรู้วิธี "ดักจับ" ข้อผิดพลาดเพื่อให้โปรแกรมยังรันต่อไปได้สวยๆ ค่ะ</p>
+            <p>เคยเขียนโปรแกรมแล้วมันหยุดทำงาน (Crash) ทันทีที่ผู้ใช้พิมพ์ข้อมูลผิดไหมคะ? นั่นคือสิ่งที่เราจะแก้กันในบทนี้ เราจะเรียนรู้วิธี "ดักจับ" ข้อผิดพลาดเพื่อให้โปรแกรมยังรันต่อไปได้อย่างราบรื่นค่ะ</p>
 
             <h2>9.1 รู้จักกับ Common Exceptions</h2>
-            <p>ก่อนจะแก้ เราต้องรู้ก่อนว่า Python มี Error ยอดฮิตอะไรบ้าง:</p>
+            <p>ก่อนจะแก้ไข เราต้องรู้จักศัตรูของเราก่อนค่ะ Error ยอดฮิตใน Python ได้แก่:</p>
             <ul class="info-list">
                 <li><strong style="color:var(--error)">ZeroDivisionError:</strong> เมื่อพยายามหารตัวเลขด้วยศูนย์</li>
-                <li><strong style="color:var(--error)">ValueError:</strong> เมื่อส่งค่าผิดประเภท (เช่น เอาคำว่า "สิบ" ไปแปลงเป็นตัวเลข)</li>
-                <li><strong style="color:var(--error)">FileNotFoundError:</strong> เมื่อพยายามเปิดไฟล์ที่ไม่มีอยู่จริง</li>
-                <li><strong style="color:var(--error)">TypeError:</strong> เมื่อใช้ Operator ผิดประเภทข้อมูล</li>
+                <li><strong style="color:var(--error)">ValueError:</strong> เมื่อส่งค่าผิดประเภท เช่น พยายามแปลงคำว่า "สิบ" เป็นเลข 10</li>
+                <li><strong style="color:var(--error)">FileNotFoundError:</strong> เมื่อโปรแกรมหาไฟล์ที่ระบุไม่เจอ</li>
+                <li><strong style="color:var(--error)">IndexError:</strong> เมื่อพยายามเข้าถึงลำดับใน List ที่ไม่มีอยู่จริง</li>
             </ul>
 
-            <h2>9.2 โครงสร้าง Try-Except</h2>
-            <p>นี่คือหัวใจหลักค่ะ เราจะเอาโค้ดที่ "เสี่ยง" ไปวางใน <code>try</code> และวางแผนรับมือใน <code>except</code></p>
+            <h2>9.2 โครงสร้าง Try-Except Flow</h2>
+            <p>ลำดับการทำงานของ Python เมื่อต้องจัดการกับความเสี่ยง:</p>
             
             
 
             <div class="error-card">
-                <strong>Syntax:</strong><br>
-                <code>try:</code> (ลองทำอันนี้ดูนะ)<br>
-                <code>except ErrorName:</code> (ถ้าเจอปัญหาชื่อนี้ ให้แก้แบบนี้นะ)<br>
-                <code>else:</code> (ถ้าไม่มีปัญหาเลย ให้ทำอันนี้นะ)<br>
-                <code>finally:</code> (ไม่ว่าจะเกิดปัญหาหรือไม่ ต้องทำอันนี้เสมอ เช่น ปิดไฟล์)
+                <strong>Syntax Guide:</strong><br>
+                <code>try:</code> <span style="color: #94a3b8;"># ลองรันโค้ดเสี่ยงๆ ตรงนี้</span><br>
+                <code>except ExceptionName:</code> <span style="color: #94a3b8;"># ถ้า Error ให้มาทำตรงนี้</span><br>
+                <code>else:</code> <span style="color: #94a3b8;"># ถ้าผ่านฉลุย (ไม่มี Error) ให้มาทำตรงนี้</span><br>
+                <code>finally:</code> <span style="color: #94a3b8;"># ไม่ว่าจะเกิดอะไรขึ้น ต้องทำอันนี้เสมอ</span>
             </div>
 
-            <h2>9.3 การ Custom Error (Raise)</h2>
-            <p>บางครั้งโปรแกรมไม่ได้ผิดหลักไวยากรณ์ แต่ผิด "กฎทางธุรกิจ" ของเรา เช่น อายุห้ามติดลบ เราสามารถสั่ง <code>raise Exception("ข้อความ")</code> เพื่อสร้าง Error ขึ้นมาเองได้ค่ะ</p>
+            <h2>9.3 การสั่ง Raise Error (Custom Error)</h2>
+            <p>บางครั้งโค้ดไม่ได้พิมพ์ผิด แต่ข้อมูลขัดต่อ "กฎ" ของเรา เช่น อายุจะติดลบไม่ได้ เราสามารถสั่งให้โปรแกรมพ่น Error ออกมาเองได้ด้วยคำสั่ง <code>raise</code> ค่ะ</p>
 
             <div class="playground">
                 <div class="pg-header">
@@ -103,21 +102,27 @@
                 <textarea id="code-input" class="code-area" rows="15">
 def division_test(a, b):
     try:
-        print(f"กำลังพยายามคำนวณ: {a} / {b}")
+        print(f"--- วิเคราะห์โจทย์: {a} / {b} ---")
+        if a < 0:
+            raise ValueError("Umi ไม่ปลื้มเลขติดลบในบทเรียนนี้นะคะ!")
+        
         result = a / b
     except ZeroDivisionError:
-        print("❌ พลาดแล้ว! ห้ามหารด้วยศูนย์นะคะ")
+        print("❌ พลาดแล้ว! คณิตศาสตร์ไม่อนุญาตให้หารด้วยศูนย์นะ")
+    except ValueError as e:
+        print(f"⚠️ กฎพิเศษ: {e}")
     except TypeError:
-        print("❌ ข้อมูลไม่ใช่ตัวเลขค่ะ คำนวณไม่ได้")
+        print("❌ ข้อมูลไม่ใช่ตัวเลข คำนวณให้ไม่ได้จริงๆ ค่ะ")
     else:
         print(f"✅ สำเร็จ! ผลลัพธ์คือ: {result}")
     finally:
-        print("--- จบการตรวจสอบรอบนี้ ---\n")
+        print("--- ระบบ Safety ตรวจสอบเสร็จสิ้น ---\n")
 
-# ทดสอบแบบต่างๆ
-division_test(10, 2)
-division_test(10, 0)
-division_test(10, "5")
+# ทดสอบเคสต่างๆ
+division_test(10, 2)    # เคสปกติ
+division_test(10, 0)    # เคสหารศูนย์
+division_test(-5, 2)    # เคส Custom Error (Raise)
+division_test(10, "5")  # เคสผิดประเภท
                 </textarea>
                 <div id="console-output" class="output">> รอการตรวจสอบระบบ Safety...</div>
             </div>
@@ -135,7 +140,7 @@ division_test(10, "5")
             const out = document.getElementById('console-output');
             try {
                 pyodide = await loadPyodide();
-                out.innerText = "> ระบบ Safety พร้อม! Neet ลองแก้ตัวเลขใน division_test ดูได้เลยนะคะ";
+                out.innerText = "> ระบบ Safety พร้อม! ลองแก้ตัวเลขใน division_test ดูได้เลยนะคะ";
             } catch (err) {
                 out.innerText = "> ระบบขัดข้อง กรุณารีเฟรชหน้าจอ";
             }
@@ -148,7 +153,7 @@ division_test(10, "5")
             const btn = document.getElementById('run-btn');
             
             btn.disabled = true;
-            out.innerText = "> กำลังดักจับ Exception...\n";
+            out.innerText = "> กำลังเริ่มกระบวนการดักจับข้อผิดพลาด...\n";
             
             try {
                 await pyodide.runPythonAsync(`
@@ -161,7 +166,7 @@ division_test(10, "5")
                 out.innerText = stdout || "> รันสำเร็จอย่างไร้รอยต่อ";
                 out.style.color = "#10b981";
             } catch (err) {
-                out.innerText = `[Fatal Error]: ${err.message}`;
+                out.innerText = `[Fatal System Error]: ${err.message}`;
                 out.style.color = "#ff7e67";
             } finally {
                 btn.disabled = false;

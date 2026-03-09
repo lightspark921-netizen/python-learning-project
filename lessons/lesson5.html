@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
@@ -35,6 +33,20 @@
         .highlight { color: var(--accent); font-weight: bold; }
         
         .note-box { background: rgba(255, 126, 103, 0.1); border: 1px solid var(--accent); padding: 20px; border-radius: 8px; margin: 20px 0; color: #f1f5f9; }
+
+        /* แผนภาพ Flowchart แบบง่าย */
+        .logic-flow {
+            background: #0f172a; padding: 30px; border-radius: 12px; margin: 25px 0;
+            display: flex; flex-direction: column; align-items: center; border: 1px solid #334155;
+        }
+        .flow-diamond {
+            width: 100px; height: 100px; background: var(--content-bg); border: 2px solid var(--secondary);
+            transform: rotate(45deg); display: flex; align-items: center; justify-content: center; margin: 20px;
+        }
+        .flow-diamond span { transform: rotate(-45deg); font-size: 0.8em; font-weight: bold; color: var(--secondary); }
+        .flow-line { width: 2px; height: 30px; background: var(--primary); position: relative; }
+        .flow-line::after { content: '▼'; position: absolute; bottom: -10px; left: -5px; color: var(--primary); font-size: 10px; }
+        .flow-rect { background: #334155; padding: 10px 20px; border-radius: 5px; font-size: 0.9em; border: 1px solid var(--primary); }
 
         .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
         .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
@@ -73,24 +85,31 @@
             <p>เป็นการตรวจสอบเงื่อนไขแบบเรียงลำดับ หากเงื่อนไขใน <code>if</code> เป็นเท็จ โปรแกรมจะขยับไปเช็คใน <code>elif</code> (Else If) และหากไม่ตรงกับเงื่อนไขใดเลย จะมาตกที่ <code>else</code></p>
 
             
-
-[Image of Python If-Else flowchart]
-
+            <div class="logic-flow">
+                <div class="flow-rect">START</div>
+                <div class="flow-line"></div>
+                <div class="flow-diamond"><span>Score >= 80?</span></div>
+                <div style="display: flex; gap: 40px;">
+                    <div><span style="color: #22c55e;">YES</span> ➜ <span class="flow-rect">Grade A</span></div>
+                    <div><span style="color: var(--accent);">NO</span> ➜ <span class="flow-rect">Check next elif...</span></div>
+                </div>
+            </div>
 
             <div class="note-box">
                 <strong>กฎเหล็กของ Python: Indentation (การย่อหน้า)</strong><br>
-                Python ไม่ใช้ปีกกา <code>{}</code> แต่ใช้การย่อหน้าเพื่อบอกขอบเขตของโค้ด หากย่อหน้าไม่เท่ากัน โปรแกรมจะเกิดข้อผิดพลาด <code>IndentationError</code> ทันที
+                Python ไม่ใช้ปีกกา <code>{}</code> แต่ใช้การย่อหน้าเพื่อบอกขอบเขตของโค้ด (Scope) หากย่อหน้าไม่เท่ากัน โปรแกรมจะเกิดข้อผิดพลาด <span class="highlight">IndentationError</span> ทันที
             </div>
 
             <h2>5.2 Logical Operators ในเงื่อนไข</h2>
+            <p>เราสามารถรวมหลายเงื่อนไขเข้าด้วยกันได้โดยใช้ตัวเชื่อมทางตรรกศาสตร์:</p>
             <ul>
-                <li><strong>and:</strong> ต้องจริงทุกเงื่อนไข</li>
-                <li><strong>or:</strong> จริงเพียงเงื่อนไขเดียวก็ได้</li>
-                <li><strong>not:</strong> กลับค่าจากจริงเป็นเท็จ และเท็จเป็นจริง</li>
+                <li><strong>and:</strong> ต้องเป็นจริง "ทุกเงื่อนไข" ถึงจะทำงาน</li>
+                <li><strong>or:</strong> เป็นจริง "เพียงเงื่อนไขเดียว" ก็เริ่มทำงานได้</li>
+                <li><strong>not:</strong> กลับค่า (Invert) จากจริงเป็นเท็จ และเท็จเป็นจริง</li>
             </ul>
 
             <h2>5.3 Match-Case (ฟีเจอร์ใหม่!)</h2>
-            <p>ใน Python 3.10 ขึ้นไป ได้มีการเพิ่ม <code>match-case</code> เข้ามาเพื่อใช้แทนการใช้ <code>if-elif</code> หลายๆ ชั้น ช่วยให้โค้ดอ่านง่ายขึ้น</p>
+            <p>ใน Python 3.10 ขึ้นไป ได้มีการเพิ่ม <code>match-case</code> เข้ามาเพื่อใช้แทนการใช้ <code>if-elif</code> หลายๆ ชั้นในกรณีที่ต้องการเช็คค่าที่แน่นอน (Exact Match) ช่วยให้โค้ดสะอาดขึ้นมาก</p>
 
             <div class="playground">
                 <div class="pg-header">

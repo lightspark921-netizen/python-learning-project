@@ -9,7 +9,6 @@
     <script>
     // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
 </script>
@@ -34,11 +33,12 @@
         h2 { color: var(--secondary); margin-top: 40px; font-size: 1.5em; border-left: 4px solid var(--primary); padding-left: 15px; }
         p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
         
-        .mode-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #0f172a; font-size: 0.9em; }
+        .mode-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #0f172a; font-size: 0.9em; overflow: hidden; border-radius: 8px; }
         .mode-table th, .mode-table td { border: 1px solid #334155; padding: 12px; text-align: left; }
         .mode-table th { background: #334155; color: var(--primary); }
 
         .highlight-box { background: rgba(34, 197, 94, 0.1); border: 1px solid var(--success); padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .info-tip { background: rgba(71, 161, 235, 0.1); border-left: 4px solid var(--secondary); padding: 15px; margin: 20px 0; font-size: 0.95em; }
 
         .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
         .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
@@ -71,10 +71,12 @@
         <div class="container">
             <h1>บทที่ 8: การจัดการไฟล์และระบบข้อมูล (File I/O)</h1>
             
-            <p>ความแตกต่างระหว่างโปรแกรมธรรมดากับซอฟต์แวร์ระดับมืออาชีพ คือความสามารถในการจัดเก็บข้อมูล (Persistence) บทนี้จะสอนการอ่านและเขียนไฟล์เพื่อบันทึกสถานะของโปรแกรมลงในระบบ</p>
+            <p>ความแตกต่างระหว่างโปรแกรมธรรมดากับซอฟต์แวร์ระดับมืออาชีพ คือความสามารถในการจัดเก็บข้อมูล (Persistence) บทนี้จะสอนการอ่านและเขียนไฟล์เพื่อบันทึกสถานะของโปรแกรมลงในระบบค่ะ</p>
+
+            
 
             <h2>8.1 File Access Modes</h2>
-            <p>การเปิดไฟล์ใน Python ต้องระบุโหมดให้ชัดเจน เพื่อป้องกันการเขียนทับโดยไม่ตั้งใจค่ะ:</p>
+            <p>การเปิดไฟล์ใน Python ต้องระบุโหมดให้ชัดเจน เพื่อป้องกันการเขียนทับโดยไม่ตั้งใจนะคะ:</p>
             
             <table class="mode-table">
                 <tr><th>Mode</th><th>คำอธิบาย</th></tr>
@@ -84,16 +86,20 @@
             </table>
 
             <h2>8.2 The Best Practice: Context Manager</h2>
-            <p>การใช้ <code>with open(...) as f:</code> เป็นวิธีมาตรฐานที่ปลอดภัยที่สุด เพราะ Python จะปิดไฟล์ให้เราอัตโนมัติเมื่อทำงานเสร็จ ป้องกันปัญหาไฟล์เสีย (Corrupt)</p>
+            <p>การใช้ <code>with open(...) as f:</code> เป็นวิธีมาตรฐานที่ปลอดภัยที่สุด เพราะ Python จะปิดไฟล์ให้เราอัตโนมัติเมื่อทำงานเสร็จ ป้องกันปัญหาไฟล์เสีย (Corrupt) หรือหน่วยความจำรั่วไหลค่ะ</p>
             
             <div class="highlight-box">
                 <strong>Syntax ที่แนะนำ:</strong><br>
-                <code>with open('memo.txt', 'w') as file:</code><br>
+                <code>with open('memo.txt', 'w', encoding='utf-8') as file:</code><br>
                 <code>&nbsp;&nbsp;&nbsp;&nbsp;file.write("บันทึกข้อมูลสำเร็จ!")</code>
             </div>
 
             <h2>8.3 การทำงานกับข้อมูล JSON</h2>
-            <p>JSON เป็นรูปแบบมาตรฐานในการแลกเปลี่ยนข้อมูล Python มีโมดูล <code>json</code> ที่แปลง Dictionary เป็นไฟล์ข้อความได้ทันที</p>
+            <p>JSON เป็นรูปแบบมาตรฐานในการแลกเปลี่ยนข้อมูล (คล้าย Dictionary ใน Python) เราใช้โมดูล <code>json</code> ในการแปลงข้อมูลเพื่อบันทึกลงไฟล์หรือส่งผ่านอินเทอร์เน็ตได้ง่ายๆ</p>
+
+            <div class="info-tip">
+                💡 <strong>รู้หรือไม่:</strong> ฟังก์ชัน <code>json.dumps()</code> คือการแปลง Object เป็น String ส่วน <code>json.loads()</code> คือการแปลง String กลับมาเป็น Object ค่ะ
+            </div>
 
             <div class="playground">
                 <div class="pg-header">
@@ -112,10 +118,16 @@ with open("note.txt", "r") as f:
     content = f.read()
     print(f"อ่านจากไฟล์: {content}")
 
-# 3. ลองจัดรูปแบบ JSON
-user_info = {"id": 101, "status": "Active", "skills": ["Python", "HTML"]}
-print("\nรูปแบบ JSON String:")
-print(json.dumps(user_info, indent=2))
+# 3. ลองจัดการข้อมูลแบบ JSON
+user_data = {
+    "name": "Neet",
+    "level": 8,
+    "status": "Learning File I/O"
+}
+
+json_string = json.dumps(user_data, indent=4)
+print("\n--- ข้อมูลในรูปแบบ JSON ---")
+print(json_string)
                 </textarea>
                 <div id="console-output" class="output">> รอการประมวลผลระบบ Data I/O...</div>
             </div>
@@ -157,7 +169,7 @@ print(json.dumps(user_info, indent=2))
                 await pyodide.runPythonAsync(code);
                 const stdout = pyodide.runPython("sys.stdout.getvalue()");
                 out.innerText = stdout || "> ทำงานสำเร็จ (ไม่มี Output)";
-                out.style.color = "#success";
+                out.style.color = "#22c55e"; // แก้ไขจาก #success เป็นค่าสีจริง
             } catch (err) {
                 out.innerText = `[File Error]: ${err.message}`;
                 out.style.color = "#ff7e67";

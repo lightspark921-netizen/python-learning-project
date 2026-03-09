@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
@@ -34,6 +32,26 @@
         p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
         .highlight { color: var(--accent); font-weight: bold; }
         
+        /* สไตล์สำหรับ Diagram การจองหน่วยความจำ */
+        .mem-diagram {
+            background: #0f172a;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        .mem-card {
+            display: inline-block;
+            border: 1px solid var(--primary);
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            background: #1e293b;
+        }
+        .mem-tag { color: var(--secondary); font-size: 0.8em; display: block; }
+        .mem-val { font-family: monospace; font-size: 1.2em; color: var(--accent); }
+
         .data-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #0f172a; border-radius: 8px; overflow: hidden; }
         .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; }
         .data-table th { background: #334155; color: var(--secondary); }
@@ -71,12 +89,21 @@
             
             <p>ในโลกของโปรแกรมมิ่ง ตัวแปร (Variable) เปรียบเสมือน "กล่อง" ที่เราใช้เก็บข้อมูลไว้ในหน่วยความจำ (RAM) เพื่อนำมาประมวลผลในภายหลัง Python มีความพิเศษกว่าภาษาอื่นตรงที่เป็นระบบ <span class="highlight">Dynamic Typing</span></p>
 
-            <h2>3.1 Dynamic Typing คืออะไร?</h2>
-            <p>ใน Python เราสามารถประกาศ <code>x = 5</code> ได้ทันที และยังสามารถเปลี่ยนเป็นข้อความได้ในภายหลัง ระบบจะจัดการเนื้อที่ในหน่วยความจำให้โดยอัตโนมัติ</p>
+            <h2>3.1 Dynamic Typing และกระบวนการจัดเก็บ</h2>
+            <p>ใน Python เมื่อเราประกาศตัวแปร ระบบจะสร้าง Object ขึ้นมาในหน่วยความจำ และให้ชื่อตัวแปรนั้นชี้ (Point) ไปที่ตำแหน่งข้อมูลดังกล่าว ดังแผนภาพ:</p>
 
-            
+            <div class="mem-diagram">
+                <p style="font-size: 0.8em; color: #94a3b8;">[ แผนภาพการจองพื้นที่ในหน่วยความจำ ]</p>
+                <div class="mem-card"><span class="mem-tag">Variable: name</span><span class="mem-val">"Umi"</span></div>
+                <div class="mem-card"><span class="mem-tag">Variable: age</span><span class="mem-val">25</span></div>
+                <div class="mem-card"><span class="mem-tag">Variable: pi</span><span class="mem-val">3.14</span></div>
+            </div>
+
+            <p>เราสามารถประกาศ <code>x = 5</code> ได้ทันที และยังสามารถเปลี่ยนเป็นข้อความได้ในภายหลัง ระบบจะจัดการเนื้อที่ในหน่วยความจำให้โดยอัตโนมัติ</p>
 
             <h2>3.2 ชนิดข้อมูลพื้นฐาน (Standard Data Types)</h2>
+            <p>ตารางสรุปชนิดข้อมูลที่พบบ่อยที่สุดในการเขียนโปรแกรม:</p>
+            
             <table class="data-table">
                 <thead>
                     <tr><th>Type</th><th>ชื่อเรียก</th><th>ตัวอย่าง</th></tr>
@@ -90,10 +117,11 @@
             </table>
 
             <h2>3.3 โครงสร้างข้อมูลแบบชุด (Collection Types)</h2>
+            <p>นอกจากตัวแปรเดี่ยว Python ยังมีโครงสร้างข้อมูลที่ซับซ้อนขึ้น:</p>
             <ul>
-                <li><strong>List <code>[ ]</code>:</strong> เก็บข้อมูลเรียงต่อกัน แก้ไขค่าได้</li>
-                <li><strong>Tuple <code>( )</code>:</strong> เก็บข้อมูลเรียงต่อกัน แต่แก้ไขค่าไม่ได้</li>
-                <li><strong>Dictionary <code>{k:v}</code>:</strong> เก็บข้อมูลแบบ Key-Value</li>
+                <li><strong>List <code>[ ]</code>:</strong> เก็บข้อมูลเรียงต่อกัน แก้ไขค่าได้ (Mutable)</li>
+                <li><strong>Tuple <code>( )</code>:</strong> เก็บข้อมูลเรียงต่อกัน แต่แก้ไขค่าไม่ได้ (Immutable)</li>
+                <li><strong>Dictionary <code>{k:v}</code>:</strong> เก็บข้อมูลแบบคู่ Key-Value เพื่อความเร็วในการค้นหา</li>
             </ul>
 
             <div class="playground">

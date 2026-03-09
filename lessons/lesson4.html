@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
@@ -37,6 +35,26 @@
         .op-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .op-item { background: #0f172a; padding: 15px; border-radius: 8px; border-left: 3px solid var(--primary); }
         .op-item code { color: var(--secondary); font-size: 1.2em; }
+
+        /* สไตล์สำหรับ Precedence Flow */
+        .precedence-box {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        .p-node {
+            padding: 8px 15px;
+            margin: 5px;
+            display: inline-block;
+            border-radius: 20px;
+            background: var(--content-bg);
+            border: 1px solid var(--primary);
+            font-size: 0.9em;
+        }
+        .p-arrow { color: var(--accent); font-weight: bold; margin: 0 10px; }
 
         .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
         .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
@@ -79,22 +97,29 @@
                 <div class="op-item"><code>/</code> <strong>Division:</strong> การหาร (ได้ float เสมอ)</div>
             </div>
 
+            <h2>4.2 ลำดับความสำคัญ (Operator Precedence)</h2>
+            <p>เมื่อมีตัวดำเนินการหลายตัวในบรรทัดเดียว Python จะเรียงลำดับตามกฎ <strong>PEMDAS</strong> จากความสำคัญสูงสุดไปต่ำสุด:</p>
+            
+            <div class="precedence-box">
+                <div class="p-node">1. ( ) วงเล็บ</div> <span class="p-arrow">➜</span>
+                <div class="p-node">2. ** ยกกำลัง</div> <span class="p-arrow">➜</span>
+                <div class="p-node">3. * / // % คูณ/หาร</div> <span class="p-arrow">➜</span>
+                <div class="p-node">4. + - บวก/ลบ</div>
+            </div>
+            
             
 
-            <h2>4.2 ลำดับความสำคัญ (Operator Precedence)</h2>
-            <p>เมื่อมีตัวดำเนินการหลายตัวในบรรทัดเดียว Python จะเรียงลำดับตามกฎ <strong>PEMDAS</strong>:</p>
             <ul>
-                <li>1. วงเล็บ <code>()</code></li>
-                <li>2. ยกกำลัง <code>**</code></li>
-                <li>3. คูณ หาร <code>* / // %</code></li>
-                <li>4. บวก ลบ <code>+ -</code></li>
+                <li><strong>Parentheses <code>()</code>:</strong> มีความสำคัญสูงสุดเสมอ ใช้เพื่อบังคับทิศทางสมการ</li>
+                <li><strong>Exponents <code>**</code>:</strong> คำนวณก่อนการคูณหรือหาร</li>
+                <li><strong>Multiplication/Division:</strong> หากอยู่ในระดับเดียวกันจะทำจาก <strong>ซ้ายไปขวา</strong></li>
             </ul>
 
             <h2>4.3 ตัวดำเนินการทางตรรกศาสตร์ (Logical Operators)</h2>
             <p>ใช้สำหรับการเปรียบเทียบค่า ซึ่งจะให้ผลลัพธ์เป็น <code>True</code> หรือ <code>False</code> เท่านั้น:</p>
             <ul>
-                <li><strong>Comparison:</strong> <code>==</code>, <code>!=</code>, <code>></code>, <code><</code></li>
-                <li><strong>Logical:</strong> <code>and</code>, <code>or</code>, <code>not</code></li>
+                <li><strong>Comparison:</strong> <code>==</code> (เท่ากับ), <code>!=</code> (ไม่เท่ากับ), <code>></code>, <code><</code></li>
+                <li><strong>Logical:</strong> <code>and</code> (และ), <code>or</code> (หรือ), <code>not</code> (ไม่)</li>
             </ul>
 
             <div class="playground">
@@ -128,7 +153,7 @@ print(f"10 เป็นเลขคู่ใช่ไหม? : {is_even}")
             const out = document.getElementById('console-output');
             try {
                 pyodide = await loadPyodide();
-                out.innerText = "> ระบบพร้อมแล้ว! ลองใส่สมการคณิตศาสตร์ที่ Neet ต้องการในช่องสีดำได้เลยค่ะ";
+                out.innerText = "> ระบบพร้อมแล้ว! ลองใส่สมการคณิตศาสตร์ที่ต้องการในช่องสีดำได้เลยค่ะ";
             } catch (err) {
                 out.innerText = "> ระบบโหลดไม่สำเร็จ กรุณาเช็คอินเทอร์เน็ตค่ะ";
             }

@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #47a1eb; --secondary: #ffd43b; --sidebar-bg: #0f172a; 
@@ -35,6 +33,30 @@
         .highlight { color: var(--accent); font-weight: bold; }
         code { background: #0f172a; padding: 4px 10px; border-radius: 4px; color: var(--secondary); font-family: 'Consolas', monospace; display: inline-block; margin: 5px 0; }
         
+        /* สไตล์สำหรับกล่องลำดับขั้นตอน (Visual Workflow) */
+        .setup-workflow {
+            background: #0f172a;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 1px solid #334155;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        .step-box {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            width: 150px;
+            font-size: 0.85em;
+            color: #fff;
+        }
+        .step-arrow { color: var(--secondary); font-weight: bold; font-size: 1.5em; }
+
         .command-box { background: #000; padding: 15px; border-radius: 8px; border: 1px solid #334155; color: #fff; font-family: 'Consolas', monospace; margin: 20px 0; }
         .command-box span { color: #22c55e; }
 
@@ -80,8 +102,16 @@
             <h2>2.3 หัวใจสำคัญ: Virtual Environments (venv)</h2>
             <p>นักพัฒนาจึงนิยมใช้ <span class="highlight">Virtual Environment</span> เพื่อสร้างพื้นที่จำลองแยกแต่ละโปรเจกต์ออกจากกัน เพื่อป้องกันปัญหา Library เวอร์ชันตีกัน</p>
             
-            
-            
+            <div class="setup-workflow">
+                <div class="step-box">1. Create venv<br>(สร้างโฟลเดอร์จำลอง)</div>
+                <span class="step-arrow">➜</span>
+                <div class="step-box">2. Activate<br>(เปิดการใช้งานระบบ)</div>
+                <span class="step-arrow">➜</span>
+                <div class="step-box">3. Install Library<br>(ติดตั้งผ่าน pip)</div>
+                <span class="step-arrow">➜</span>
+                <div class="step-box">4. Coding!<br>(เริ่มเขียนโปรแกรม)</div>
+            </div>
+
             <p><strong>คำสั่งที่ควรรู้:</strong></p>
             <div class="command-box">
                 <span># 1. สร้างสภาพแวดล้อมจำลอง</span><br>
@@ -116,7 +146,6 @@ print("Status: Environment is ready to execute.")
 
     <script>
         let pyodide;
-        // โหลดระบบ Python Interpreter
         async function initPyodide() {
             const out = document.getElementById('console-output');
             try {
@@ -134,20 +163,15 @@ print("Status: Environment is ready to execute.")
             const btn = document.getElementById('run-btn');
             
             btn.disabled = true;
-            out.innerText = "> กำลังประมวลผล...\n";
+            out.innerText = "> กำลังประมวลผลผ่าน Virtual Simulator...\n";
             
             try {
-                // เซ็ตระบบให้ดักจับ print
                 await pyodide.runPythonAsync(`
                     import sys
                     import io
                     sys.stdout = io.StringIO()
                 `);
-                
-                // รันโค้ดจริง
                 await pyodide.runPythonAsync(code);
-                
-                // ดึงผลลัพธ์มาแสดง
                 const stdout = pyodide.runPython("sys.stdout.getvalue()");
                 out.innerText = stdout || "> รันสำเร็จ (ไม่มีการแสดงผล)";
                 out.style.color = "#10b981";

@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #ffd43b; --secondary: #47a1eb; 
@@ -35,8 +33,11 @@
         p { color: #cbd5e1; margin-bottom: 20px; text-align: justify; }
         
         .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
-        .concept-card { background: #0f172a; padding: 20px; border-radius: 10px; border: 1px solid #334155; }
-        .concept-card h4 { color: var(--accent); margin-top: 0; }
+        .concept-card { background: #0f172a; padding: 25px; border-radius: 10px; border: 1px solid #334155; transition: 0.3s; }
+        .concept-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .concept-card h4 { color: var(--accent); margin-top: 0; font-size: 1.2em; }
+
+        .highlight-box { background: rgba(168, 85, 247, 0.1); border: 1px solid var(--accent); padding: 20px; border-radius: 8px; margin: 25px 0; }
 
         .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
         .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
@@ -48,7 +49,8 @@
         .nav-buttons { margin-top: 50px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 30px; }
         .btn-page { padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
         .prev { background: #334155; color: #fff; }
-        .finish { background: linear-gradient(45deg, #a855f7, #47a1eb); color: #fff; }
+        .finish { background: linear-gradient(45deg, #a855f7, #47a1eb); color: #fff; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); }
+        .finish:hover { opacity: 0.9; transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -69,69 +71,73 @@
         <div class="container">
             <h1>บทที่ 10: สถาปัตยกรรม OOP (Object-Oriented Programming)</h1>
             
-            <p>ยินดีด้วยค่ะ Neet! คุณเดินทางมาถึงบทที่สำคัญที่สุดในสายงานโปรแกรมเมอร์มืออาชีพ OOP คือการมองทุกอย่างในโปรแกรมให้เป็น "วัตถุ" ที่มีทั้งคุณสมบัติและพฤติกรรมค่ะ</p>
+            <p>ยินดีด้วยค่ะ <strong>Neet</strong>! คุณเดินทางมาถึงบทที่สำคัญที่สุดในสายงานโปรแกรมเมอร์มืออาชีพ OOP คือการมองทุกอย่างในโปรแกรมให้เป็น "วัตถุ" (Object) ที่มีทั้งข้อมูลและพฤติกรรมในตัวเองค่ะ</p>
+
+            
 
             <h2>10.1 Class vs Object</h2>
-            <p>ลองนึกภาพว่า <strong>Class</strong> คือ "แบบแปลนพิมพ์เขียว" ส่วน <strong>Object</strong> คือ "สิ่งที่สร้างขึ้นจากแปลนนั้น" ค่ะ</p>
+            <p>นึกภาพง่ายๆ ว่า <strong>Class</strong> คือ "แม่พิมพ์ขนม" ส่วน <strong>Object</strong> คือ "ขนม" ที่ถูกกดออกมาจากพิมพ์นั้นๆ ค่ะ</p>
             
-            
-
             <div class="concept-grid">
                 <div class="concept-card">
-                    <h4>Attributes</h4>
-                    <p>คือ "ข้อมูล" หรือ "สถานะ" ของวัตถุ เช่น สีของรถ, ชื่อของพนักงาน, หรือเลือดของตัวละครในเกม</p>
+                    <h4>Attributes (ข้อมูล)</h4>
+                    <p>เปรียบเสมือน <strong>ค่านามธรรม</strong> ของวัตถุ เช่น ชื่อ, รุ่น, สี หรือปริมาณพลังงานที่มีอยู่</p>
                 </div>
                 <div class="concept-card">
-                    <h4>Methods</h4>
-                    <p>คือ "พฤติกรรม" หรือ "สิ่งที่ทำได้" เช่น รถสามารถเร่งความเร็วได้, พนักงานสามารถคำนวณเงินเดือนได้</p>
+                    <h4>Methods (ความสามารถ)</h4>
+                    <p>เปรียบเสมือน <strong>การกระทำ</strong> ของวัตถุ เช่น การเดิน, การชาร์จไฟ หรือการทักทาย</p>
                 </div>
             </div>
 
-            <h2>10.2 หัวใจสำคัญของ OOP (The Pillars)</h2>
-            <ul style="color: #cbd5e1;">
-                <li><strong>Encapsulation:</strong> การห่อหุ้มข้อมูลไว้ภายใน (ป้องกันการเข้าถึงจากภายนอกโดยตรง)</li>
-                <li><strong>Inheritance:</strong> การสืบทอดคุณสมบัติ (เช่น คลาสหมา สืบทอดมาจากคลาสสัตว์)</li>
-                <li><strong>Polymorphism:</strong> การที่วัตถุต่างชนิดกัน มีชื่อฟังก์ชันเหมือนกันแต่ทำงานต่างกัน</li>
-            </ul>
-
+            <h2>10.2 หัวใจสำคัญของ OOP (The 4 Pillars)</h2>
+            <p>การเขียนโปรแกรมเชิงวัตถุมีเสาหลักที่ทำให้โค้ดยืดหยุ่นและนำกลับมาใช้ใหม่ได้ง่าย:</p>
             
 
-            <h2>10.3 การเขียน Constructor (`__init__`)</h2>
-            <p>ใน Python เราใช้ฟังก์ชัน <code>__init__</code> เพื่อกำหนดค่าเริ่มต้นให้กับวัตถุทันทีที่มันถูกสร้างขึ้นมาค่ะ</p>
+            <div class="highlight-box">
+                <ul style="margin: 0; padding-left: 20px; color: var(--text-main);">
+                    <li><strong>Encapsulation:</strong> การเก็บข้อมูลไว้ในแคปซูล ป้องกันการแก้ไขมั่วๆ จากภายนอก</li>
+                    <li><strong>Inheritance:</strong> การสืบทอด (เช่น หุ่นยนต์รบ สืบทอดความสามารถมาจาก หุ่นยนต์พื้นฐาน)</li>
+                    <li><strong>Polymorphism:</strong> การที่หุ่นยนต์ต่างรุ่นกัน มีคำสั่ง "ทำงาน" เหมือนกันแต่ทำไม่เหมือนกัน</li>
+                    <li><strong>Abstraction:</strong> การซ่อนรายละเอียดที่ยุ่งยากไว้ข้างหลัง ให้เหลือแค่ปุ่มกดที่เข้าใจง่าย</li>
+                </ul>
+            </div>
+
+            <h2>10.3 การสร้าง Constructor (`__init__`)</h2>
+            <p>เราใช้ <code>self</code> เพื่ออ้างถึง "ตัวฉันเอง" (ตัววัตถุที่กำลังถูกสร้าง) และใช้ <code>__init__</code> เพื่อเตรียมความพร้อมให้วัตถุค่ะ</p>
 
             <div class="playground">
                 <div class="pg-header">
                     <span>robot_factory.py</span> 
-                    <button class="btn-run" id="run-btn" onclick="runPython()">สร้างหุ่นยนต์</button>
+                    <button class="btn-run" id="run-btn" onclick="runPython()">เริ่มการผลิตหุ่นยนต์</button>
                 </div>
                 <textarea id="code-input" class="code-area" rows="18">
 class Robot:
     def __init__(self, name, model):
         self.name = name
         self.model = model
-        self.battery = 100
+        self.battery = 100  # ทุกตัวที่เกิดมาจะมีแบต 100
 
     def introduce(self):
-        return f"สวัสดี! ผมชื่อ {self.name} รุ่น {self.model} แบตเตอรี่คงเหลือ {self.battery}%"
+        return f"สวัสดี Neet! ผมคือ {self.name} รุ่น {self.model} แบตคงเหลือ {self.battery}%"
 
-    def charge(self):
-        self.battery = 100
-        return f"{self.name} ชาร์จแบตเต็มแล้ว!"
+    def work(self, usage):
+        self.battery -= usage
+        return f"{self.name} กำลังทำงาน... เสียพลังงานไป {usage}%"
 
-# สร้าง Object จากคลาส Robot
-robot1 = Robot("Umi-Bot", "V.3.10")
-robot2 = Robot("Neet-Bot", "X-Series")
+# สร้าง Object จริงๆ ออกมา
+umi_bot = Robot("Umi-Assistant", "NextGen-v1")
+neet_bot = Robot("Neet-Prime", "X-Coder")
 
-print(robot1.introduce())
-print(robot2.introduce())
-print(robot2.charge())
+print(umi_bot.introduce())
+print(neet_bot.work(20))
+print(neet_bot.introduce())
                 </textarea>
-                <div id="console-output" class="output">> รอโรงงานผลิตหุ่นยนต์...</div>
+                <div id="console-output" class="output">> รอโรงงานวิเคราะห์สถาปัตยกรรม OOP...</div>
             </div>
 
             <div class="nav-buttons">
-                <a href="lesson9.html" class="btn-page prev">⬅️ บทที่ 9</a>
-                <a href="../Part2.html" class="btn-page finish">🎉 จบหลักสูตร Part 2!</a>
+                <a href="lesson9.html" class="btn-page prev">⬅️ กลับไปทบทวนบทที่ 9</a>
+                <a href="../Part2.html" class="btn-page finish">✨ จบหลักสูตร Python Part 2!</a>
             </div>
         </div>
     </div>
@@ -142,9 +148,9 @@ print(robot2.charge())
             const out = document.getElementById('console-output');
             try {
                 pyodide = await loadPyodide();
-                out.innerText = "> ระบบ OOP พร้อมใช้งาน! ลองตั้งชื่อหุ่นยนต์ในแบบของตัวเองดูนะคะ";
+                out.innerText = "> ระบบ OOP ออนไลน์แล้ว! Neet ลองเปลี่ยนชื่อหุ่นยนต์ในวงเล็บดูนะคะ";
             } catch (err) {
-                out.innerText = "> ระบบขัดข้อง";
+                out.innerText = "> ไม่สามารถเชื่อมต่อระบบประมวลผลได้";
             }
         }
         initPyodide();
@@ -155,7 +161,7 @@ print(robot2.charge())
             const btn = document.getElementById('run-btn');
             
             btn.disabled = true;
-            out.innerText = "> กำลังประกอบวัตถุและรันเมธอด...\n";
+            out.innerText = "> กำลังสั่งโรงงานผลิตวัตถุตามโครงสร้าง Class...\n";
             
             try {
                 await pyodide.runPythonAsync(`
@@ -165,10 +171,10 @@ print(robot2.charge())
                 `);
                 await pyodide.runPythonAsync(code);
                 const stdout = pyodide.runPython("sys.stdout.getvalue()");
-                out.innerText = stdout || "> วัตถุถูกสร้างขึ้นสำเร็จ";
-                out.style.color = "#10b981";
+                out.innerText = stdout || "> วัตถุถูกสร้างและทำงานสำเร็จ";
+                out.style.color = "#22c55e";
             } catch (err) {
-                out.innerText = `[OOP Error]: ${err.message}`;
+                out.innerText = `[OOP Syntax Error]: ${err.message}`;
                 out.style.color = "#ff7e67";
             } finally {
                 btn.disabled = false;

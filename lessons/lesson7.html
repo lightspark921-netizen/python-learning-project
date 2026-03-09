@@ -7,12 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <script>
-    // ตรวจสอบสถานะการล็อกอิน
     if (localStorage.getItem('isLoggedIn') !== 'true') {
-        // ต้องใช้ ../ เพื่อถอยออกจากโฟลเดอร์ Lessons ไปหาหน้า index.html (Login) ที่อยู่ข้างนอก
         window.location.href = '../index.html'; 
     }
-</script>
+    </script>
     <style>
         :root {
             --primary: #ffd43b; --secondary: #47a1eb; 
@@ -36,6 +34,14 @@
         .highlight { color: var(--primary); font-weight: bold; }
         
         .code-block { background: #0f172a; padding: 15px; border-radius: 8px; font-family: 'Consolas', monospace; color: #f1f5f9; margin: 15px 0; border: 1px solid #334155; border-left: 4px solid var(--accent); }
+
+        /* Variable Scope Visual */
+        .scope-box {
+            border: 2px dashed #47a1eb; padding: 20px; border-radius: 10px; margin: 20px 0; background: rgba(71, 161, 235, 0.05);
+        }
+        .local-scope {
+            border: 2px solid var(--accent); padding: 15px; margin-top: 15px; border-radius: 5px; background: rgba(34, 197, 94, 0.1);
+        }
 
         .playground { background: #000; border: 1px solid var(--primary); border-radius: 10px; margin: 40px 0; overflow: hidden; }
         .pg-header { background: #334155; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; font-family: monospace; }
@@ -71,29 +77,36 @@
             <p>เมื่อโปรแกรมมีความซับซ้อนมากขึ้น การแบ่งโค้ดออกเป็นส่วนย่อยๆ ที่ทำงานเฉพาะอย่าง (Modularization) จะช่วยให้เราไม่ต้องเขียนโค้ดซ้ำ และหาข้อผิดพลาดได้ง่ายขึ้นมากค่ะ</p>
 
             <h2>7.1 การนิยามฟังก์ชัน (Defining Functions)</h2>
-            <p>ฟังก์ชันคือชุดคำสั่งที่สามารถนำกลับมาใช้ซ้ำได้ โดยใช้คำสำคัญ <code>def</code> และสามารถส่งค่ากลับได้ด้วย <code>return</code></p>
+            <p>ฟังก์ชันคือชุดคำสั่งที่สามารถนำกลับมาใช้ซ้ำได้ โดยใช้คำสำคัญ <code>def</code> ตามด้วยชื่อฟังก์ชันและวงเล็บ</p>
             
             
 
             <div class="code-block">
                 def calculate_vat(price):<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"""ฟังก์ชันคำนวณภาษีมูลค่าเพิ่ม"""<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;return price * 0.07
             </div>
 
             <h2>7.2 ประเภทของ Argument</h2>
-            <p>ความยืดหยุ่นของ Python ในการส่งค่า:</p>
+            <p>ความยืดหยุ่นของ Python ในการส่งค่าเข้าฟังก์ชัน:</p>
             <ul>
-                <li><strong>Positional Arguments:</strong> ส่งตามลำดับ (เช่น <code>add(5, 10)</code>)</li>
-                <li><strong>Default Parameters:</strong> กำหนดค่าเริ่มต้น (เช่น <code>def greet(msg="Hello")</code>)</li>
+                <li><strong>Positional Arguments:</strong> ส่งค่าตามลำดับตำแหน่ง</li>
+                <li><strong>Keyword Arguments:</strong> ระบุชื่อ Parameter ตอนเรียก (เช่น <code>add(x=5, y=10)</code>)</li>
+                <li><strong>Default Parameters:</strong> กำหนดค่าเริ่มต้นหากไม่มีการส่งค่ามา (เช่น <code>def greet(msg="Hello")</code>)</li>
             </ul>
 
             <h2>7.3 ขอบเขตของตัวแปร (Scope)</h2>
-            <p>ตัวแปรที่ประกาศในฟังก์ชันเป็น <span class="highlight">Local Scope</span> (เรียกใช้ข้างนอกไม่ได้) ส่วนตัวแปรที่ประกาศข้างนอกเป็น <span class="highlight">Global Scope</span></p>
+            <p>ตัวแปรแต่ละตัวมี "อายุ" และ "พื้นที่" ของตัวเอง:</p>
             
-            
+            <div class="scope-box">
+                <strong>Global Scope:</strong> ตัวแปรที่อยู่นอกสุด ทุกส่วนมองเห็น
+                <div class="local-scope">
+                    <strong>Local Scope:</strong> ตัวแปรที่อยู่ในฟังก์ชัน มองเห็นเฉพาะในฟังก์ชันนั้นๆ
+                </div>
+            </div>
 
             <h2>7.4 การใช้โมดูล (Standard Library)</h2>
-            <p>เราสามารถดึงความสามารถเสริมมาใช้ได้ด้วยคำสั่ง <code>import</code> เช่น โมดูล <code>math</code> หรือ <code>random</code></p>
+            <p>เราไม่จำเป็นต้องเขียนทุกอย่างเอง! Python มีโมดูลมาตรฐานที่รวบรวมฟังก์ชันเก่งๆ ไว้ให้เรียกใช้ผ่านคำสั่ง <code>import</code></p>
 
             <div class="playground">
                 <div class="pg-header">
@@ -106,6 +119,7 @@ import math
 # 1. นิยามฟังก์ชันพร้อม Default Parameter
 def calculate_area(radius, shape="circle"):
     if shape == "circle":
+        # ใช้ math module คำนวณค่า PI
         return math.pi * (radius ** 2)
     return 0
 
@@ -113,6 +127,7 @@ def calculate_area(radius, shape="circle"):
 r = 10
 area = calculate_area(r)
 
+print(f"--- ระบบคำนวณพื้นที่อัตโนมัติ ---")
 print(f"พื้นที่วงกลมที่มีรัศมี {r} หน่วย")
 print(f"คำนวณได้: {area:.2f} ตารางหน่วย")
                 </textarea>
@@ -132,7 +147,7 @@ print(f"คำนวณได้: {area:.2f} ตารางหน่วย")
             const out = document.getElementById('console-output');
             try {
                 pyodide = await loadPyodide();
-                out.innerText = "> ระบบ Function พร้อมใช้งาน! Neet ลองแก้ค่า radius ในโค้ดดูนะคะ";
+                out.innerText = "> ระบบ Function พร้อมใช้งาน! ลองเพิ่ม parameter ใหม่ๆ ในโค้ดดูนะคะ";
             } catch (err) {
                 out.innerText = "> โหลดระบบไม่สำเร็จ";
             }
@@ -145,7 +160,7 @@ print(f"คำนวณได้: {area:.2f} ตารางหน่วย")
             const btn = document.getElementById('run-btn');
             
             btn.disabled = true;
-            out.innerText = "> กำลังประมวลผลฟังก์ชันสแต็ก...\n";
+            out.innerText = "> กำลังประมวลผลฟังก์ชันและโมดูล...\n";
             
             try {
                 await pyodide.runPythonAsync(`
